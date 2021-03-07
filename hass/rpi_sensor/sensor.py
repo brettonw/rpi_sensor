@@ -57,16 +57,17 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         hass.data[DOMAIN] = { }
     dataHost = hass.data[DOMAIN]
 
+    # get a sample record from the sensor to set up the configuration
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
-    if ("temperature" in record):
-        _LOGGER.debug( "Adding Temperature Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorTemperature(hass, config[CONF_HOST], config[CONF_NAME] + "_temperature")])
     if ("humidity" in record):
         _LOGGER.debug( "Adding Humidity Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorHumidity(hass, config[CONF_HOST], config[CONF_NAME] + "_humidity")])
+        add_entities([RpiSensorHumidity(hass, config[CONF_HOST], config[CONF_NAME] + " Humidity")])
     if ("pressure" in record):
         _LOGGER.debug( "Adding Pressure Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorPressure(hass, config[CONF_HOST], config[CONF_NAME] + "_pressure")])
+        add_entities([RpiSensorPressure(hass, config[CONF_HOST], config[CONF_NAME] + " Pressure")])
+    if ("temperature" in record):
+        _LOGGER.debug( "Adding Temperature Sensor from host ({})".format(config[CONF_HOST]) )
+        add_entities([RpiSensorTemperature(hass, config[CONF_HOST], config[CONF_NAME] + " Temperature")])
 
 class RpiSensor (Entity):
     def __init__(self, hass, host, name):
