@@ -105,7 +105,7 @@ class RpiSensorHumidity(RpiSensor):
 
     @property
     def state(self):
-        return self._hass.data[DOMAIN][self._host]["humidy"]
+        return self._hass.data[DOMAIN][self._host]["humidity"]
 
     @property
     def device_class (self):
