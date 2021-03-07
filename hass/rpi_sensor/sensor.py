@@ -8,7 +8,6 @@ sensor:
     name: "Test0 Rpi"
     host: "rpi-test-0"
     scan_interval: 30
-    temperature_correction: 0
 
 """
 
@@ -28,14 +27,10 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = "rpi_sensor"
 DOMAIN_DATA = DOMAIN + "data"
 
-SCAN_INTERVAL = timedelta(seconds=10)
 DATA_REFRESH_INTERVAL_MS = 10 * 1000
-
-TEMPERATURE_CORRECTION = "temperature_correction"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Optional(TEMPERATURE_CORRECTION): cv.string,
         vol.Required(CONF_HOST): cv.string,
         vol.Required(CONF_NAME): cv.string
     }
@@ -60,45 +55,97 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     dataHost = hass.data[DOMAIN]
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
     if (record["temperature"] != "-"):
-        correction = 0
-        if (TEMPERATURE_CORRECTION in config):
-            correction = config[TEMPERATURE_CORRECTION]
-        add_entities([RpiTemperatureSensor(hass, config[CONF_HOST], config[CONF_NAME] + "_temperature", correction)])
-        """
+        add_entities([RpiTemperatureSensor(hass, config[CONF_HOST], config[CONF_NAME] + "_temperature")])
     if (record["humidity"] != "-"):
-        async_add_entities([RpiHumiditySensor(config[CONF_HOST], config[CONF_NAME])])
+        add_entities([RpiHumiditySensor(hass, config[CONF_HOST], config[CONF_NAME] + "_humidity")])
     if (record["pressure"] != "-"):
-        async_add_entities([RpiPressureSensor(config[CONF_HOST], config[CONF_NAME])])
-        """
+        add_entities([RpiPressureSensor(hass, config[CONF_HOST], config[CONF_NAME] + "_pressure")])
+
 
 class RpiTemperatureSensor(Entity):
-    """Representation of the rpi temperature sensor."""
-
-    def __init__(self, hass, host, name, correction):
-        """Initialize the sensor."""
+    def __init__(self, hass, host, name):
         self._hass = hass
         self._host = host
         self._name = name
-        self._correction = correction
         self.update()
 
     @property
     def name(self):
-        """Return the name of the sensor."""
         return self._name
 
     @property
     def state(self):
-        """Return the state of the sensor."""
-        return self._hass.data[DOMAIN][self._host]["temperature"] + self._correction
+        return self._hass.data[DOMAIN][self._host]["temperature"]
+
+    @property
+    def device_class (self):
+        return DEVICE_CLASS_TEMPERATURE
 
     @property
     def unit_of_measurement(self):
-        """Return the unit of measurement."""
         return TEMP_CELSIUS
 
     def update(self):
-        """Fetch new state data for the sensor."""
+        try:
+            self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
+        except URLError as error:
+            _LOGGER.error( "Unable to retrieve data from Sensor host ({}): {}".format(self._host, error.reason) )
+            return
+
+class RpiHumiditySensor(Entity):
+    def __init__(self, hass, host, name):
+        self._hass = hass
+        self._host = host
+        self._name = name
+        self.update()
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def state(self):
+        return self._hass.data[DOMAIN][self._host]["humidy"]
+
+    @property
+    def device_class (self):
+        return DEVICE_CLASS_HUMIDITY
+
+    @property
+    def unit_of_measurement(self):
+        return PERCENTAGE
+
+    def update(self):
+        try:
+            self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
+        except URLError as error:
+            _LOGGER.error( "Unable to retrieve data from Sensor host ({}): {}".format(self._host, error.reason) )
+            return
+
+class RpiPressureSensor(Entity):
+    def __init__(self, hass, host, name):
+        self._hass = hass
+        self._host = host
+        self._name = name
+        self.update()
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def state(self):
+        return self._hass.data[DOMAIN][self._host]["pressure"]
+
+    @property
+    def device_class (self):
+        return DEVICE_CLASS_PRESSURE
+
+    @property
+    def unit_of_measurement(self):
+        return PRESSURE_HPA
+
+    def update(self):
         try:
             self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
         except URLError as error:
