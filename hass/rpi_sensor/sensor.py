@@ -60,73 +60,38 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     # get a sample record from the sensor to set up the configuration
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
     if ("humidity" in record):
-        _LOGGER.debug( "Adding Humidity Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorHumidity(hass, config[CONF_HOST], config[CONF_NAME] + " Humidity")])
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "humidity", DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
     if ("pressure" in record):
-        _LOGGER.debug( "Adding Pressure Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorPressure(hass, config[CONF_HOST], config[CONF_NAME] + " Pressure")])
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "pressure", DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
     if ("temperature" in record):
-        _LOGGER.debug( "Adding Temperature Sensor from host ({})".format(config[CONF_HOST]) )
-        add_entities([RpiSensorTemperature(hass, config[CONF_HOST], config[CONF_NAME] + " Temperature")])
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "temperature", DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
 
 class RpiSensor (Entity):
-    def __init__(self, hass, host, name):
+    def __init__(self, hass, host, name, type, device_class, unit_of_measurement):
+        _LOGGER.debug( "Adding {} sensor from host ({})".format(type, host) )
         self._hass = hass
         self._host = host
-        self._name = name
+        self._name = "{} {}".format (name, type.capitalize ())
+        self._type = type
+        self._device_class = device_class
+        self._unit_of_measurement = unit_of_measurement
         self.update()
 
     @property
     def name(self):
         return self._name
 
+    @property
+    def state(self):
+        return self._hass.data[DOMAIN][self._host][self._type]
+
+    @property
+    def device_class (self):
+        return self._device_class
+
+    @property
+    def unit_of_measurement(self):
+        return self._unit_of_measurement
+
     def update(self):
         self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
-
-class RpiSensorTemperature(RpiSensor):
-    def __init__(self, hass, host, name):
-        RpiSensor.__init__(self, hass, host, name)
-
-    @property
-    def state(self):
-        return self._hass.data[DOMAIN][self._host]["temperature"]
-
-    @property
-    def device_class (self):
-        return DEVICE_CLASS_TEMPERATURE
-
-    @property
-    def unit_of_measurement(self):
-        return TEMP_CELSIUS
-
-class RpiSensorHumidity(RpiSensor):
-    def __init__(self, hass, host, name):
-        RpiSensor.__init__(self, hass, host, name)
-
-    @property
-    def state(self):
-        return self._hass.data[DOMAIN][self._host]["humidity"]
-
-    @property
-    def device_class (self):
-        return DEVICE_CLASS_HUMIDITY
-
-    @property
-    def unit_of_measurement(self):
-        return PERCENTAGE
-
-class RpiSensorPressure(RpiSensor):
-    def __init__(self, hass, host, name):
-        RpiSensor.__init__(self, hass, host, name)
-
-    @property
-    def state(self):
-        return self._hass.data[DOMAIN][self._host]["pressure"]
-
-    @property
-    def device_class (self):
-        return DEVICE_CLASS_PRESSURE
-
-    @property
-    def unit_of_measurement(self):
-        return PRESSURE_HPA
