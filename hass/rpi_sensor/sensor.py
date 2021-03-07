@@ -27,6 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = "rpi_sensor"
 DOMAIN_DATA = DOMAIN + "data"
 
+# this essentially caches the last result for at least this long
 DATA_REFRESH_INTERVAL_MS = 10 * 1000
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -50,14 +51,13 @@ def api(host, fallback, refreshInterval):
     return result
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the sensor platform."""
     # we want to store multiple sensors in our HASS domain, so if it hasn't been initialized we need
     # a new dictionary
     if (not (DOMAIN in hass.data)):
         hass.data[DOMAIN] = { }
     dataHost = hass.data[DOMAIN]
 
-    # get a sample record from the sensor to set up the configuration
+    # get a sample record from the sensor to create the needed entities
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
     if ("humidity" in record):
         add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "humidity", DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
