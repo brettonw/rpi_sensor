@@ -59,10 +59,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
     if ("temperature" in record):
+        _LOGGER.debug( "Adding Temperature Sensor from host ({})".format(config[CONF_HOST]) )
         add_entities([RpiSensorTemperature(hass, config[CONF_HOST], config[CONF_NAME] + "_temperature")])
     if ("humidity" in record):
+        _LOGGER.debug( "Adding Humidity Sensor from host ({})".format(config[CONF_HOST]) )
         add_entities([RpiSensorHumidity(hass, config[CONF_HOST], config[CONF_NAME] + "_humidity")])
     if ("pressure" in record):
+        _LOGGER.debug( "Adding Pressure Sensor from host ({})".format(config[CONF_HOST]) )
         add_entities([RpiSensorPressure(hass, config[CONF_HOST], config[CONF_NAME] + "_pressure")])
 
 class RpiSensor (Entity):
