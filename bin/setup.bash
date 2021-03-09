@@ -111,7 +111,7 @@ fi;
 HOSTNAME=$(sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "hostname");
 NEW_HOSTNAME="";
 while [[ -z $NEW_HOSTNAME ]]; do
-    read -p "What is hostname for $RASPBERRY_PI_USER@$RASPBERRY_PI? ($HOSTNAME)" NEW_HOSTNAME;
+    read -p "What is hostname for $RASPBERRY_PI_USER@$RASPBERRY_PI? ($HOSTNAME) " NEW_HOSTNAME;
     if [ -z $NEW_HOSTNAME ]; then
         NEW_HOSTNAME=$HOSTNAME;
     fi
