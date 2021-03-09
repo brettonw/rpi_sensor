@@ -21,8 +21,8 @@ fi
 binPath="$homePath/bin";
 configuredSensorFile="$binPath/sensor.py";
 if [ ! -e "$configuredSensorFile" ]; then
-  installPath="$executingDir/install";
-  sensorPath="$executingDir/sensors";
+  installPath="$executingDir/../install";
+  sensorPath="$executingDir/../sensors";
 
   echo "No sensor is configured. The choices are:";
   find "$sensorPath" -printf '    %P\n' | sed -e "s/.py$//";
@@ -47,7 +47,7 @@ if [ -e "$configuredSensorFile" ]; then
   serviceName="get-sensor.service";
   echo "Installing service \"$serviceName\"...";
   sudo systemctl stop "$serviceName";
-  sudo cp "$binPath/$serviceName" "/lib/systemd/system/"
+  sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
   sudo systemctl enable "$serviceName";
   sudo systemctl start "$serviceName";
 fi
