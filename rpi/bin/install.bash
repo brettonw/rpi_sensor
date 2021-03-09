@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+# get the path where we are executing from
+executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 # create the "sensor" user
 user="brettonw";
 homePath="/home/$user";
@@ -18,8 +21,8 @@ fi
 binPath="$homePath/bin";
 configuredSensorFile="$binPath/sensor.py";
 if [ ! -e "$configuredSensorFile" ]; then
-  installPath="$homePath/install";
-  sensorPath="$homePath/sensor";
+  installPath="$executingDir/install";
+  sensorPath="$executingDir/sensors";
 
   echo "No sensor is configured. The choices are:";
   find "$sensorPath" -printf '    %P\n' | sed -e "s/.py$//";

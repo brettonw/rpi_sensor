@@ -6,7 +6,6 @@
 # get the path where we are executing from
 EXECUTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-
 # get the name of the machine we are logging into
 RASPBERRY_PI=$1;
 if [[ -z  $RASPBERRY_PI  ]]; then
@@ -196,7 +195,7 @@ ssh $RASPBERRY_PI "if [ ! -d bin ]; then mkdir bin; fi;"
 
 # git clone repository
 echo "Cloning...";
-ssh $RASPBERRY_PI "if [ ! -d rpi_sensor ]; then git clone git@github.com:brettonw/rpi_sensor.git; fi;"
+ssh $RASPBERRY_PI "if [ ! -d rpi_sensor ]; then git clone git@github.com:brettonw/rpi_sensor.git; else cd rpi_sensor; git pull; fi;"
 
 # reboot the box to complete everything
 ssh $RASPBERRY_PI "sudo reboot now";
