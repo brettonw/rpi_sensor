@@ -15,8 +15,10 @@ if [ -z "$I2C_CONFIG" ]; then
 fi;
 
 sed -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/" "$MODULES";
-if ! grep -q "^i2c[-_]dev" "$MODULES"; then
-printf "i2c-dev\n" >> "$MODULES"
-fi
+I2C_MODULES=$(grep -q "^i2c[-_]dev" "$MODULES");
+if [ -z "I2C_MODULES" ]; then
+    echo "i2c-dev" >> "$MODULES"
+fi;
+
 dtparam i2c_arm=on
 modprobe i2c-dev
