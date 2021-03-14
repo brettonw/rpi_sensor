@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
 
-sudo pip3 install adafruit-python-shell;
-sudo pip3 install adafruit-blinka;
-sudo pip3 install adafruit-circuitpython-mcp9808;
+# get the path where we are executing from
+EXECUTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# enable i2c and install the driver
+. $EXECUTING_DIR/../bin/install-i2c.bash
+pip3 install adafruit-circuitpython-mcp9808;
 

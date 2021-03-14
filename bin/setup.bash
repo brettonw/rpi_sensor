@@ -94,26 +94,12 @@ while [ -z "$RASPBERRY_PI_USER_PASSWORD" ]; do
     checkLogin2 "retry";
 done
 
-# try to set a host name
-HOSTNAME=$(sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "hostname");
-NEW_HOSTNAME="";
-while [ -z "$NEW_HOSTNAME" ]; do
-    read -p "What is hostname for $RASPBERRY_PI_USER@$RASPBERRY_PI? ($HOSTNAME) " NEW_HOSTNAME;
-    if [ -z "$NEW_HOSTNAME" ]; then
-        NEW_HOSTNAME=$HOSTNAME;
-    fi
-done
-if [ "$HOSTNAME" != "$NEW_HOSTNAME" ]; then
-    echo "    Updating hostname to $NEW_HOSTNAME...";
-    sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "echo \"$NEW_HOSTNAME\" | sudo tee /etc/hostname > /dev/null";
-    sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "sudo sed -i \"s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g\" /etc/hosts";
-fi
-
 # check that locale has been configured
 echo "Checking locale...";
-currentLocale=$(sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "locale | grep 'LANG=en_US.UTF-8'");
-if [ -z "$currentLocale" ]; then
+currentLocale=$(sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "cat /etc/locale.gen | grep \"en_US.UTF-8\" | sed -e \"s/.UTF-8//g\"");
+if [ "$currentLocale" != "en_US" ]; then
     echo "    Setting locale...";
+    #read -p "press any key to proceed" IGNORED;
     sshpass -p $RASPBERRY_PI_USER_PASSWORD scp $EXECUTING_DIR/set-locale.bash $RASPBERRY_PI_USER@$RASPBERRY_PI:~/;
     sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "sudo ~pi/set-locale.bash" 2>&1
     sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "sudo cp /etc/timezone /etc/timezone.dist; echo \"America/New_York\" | sudo tee /etc/timezone; sudo dpkg-reconfigure -f noninteractive tzdata;";
@@ -121,6 +107,23 @@ if [ -z "$currentLocale" ]; then
 else
     echo "Locale is ($currentLocale)";
 fi;
+
+# try to set a host name
+HOSTNAME=$(sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "hostname");
+if [ "$HOSTNAME" == "raspberrypi" ]; then
+    NEW_HOSTNAME="";
+    while [ -z "$NEW_HOSTNAME" ]; do
+        read -p "What is hostname for $RASPBERRY_PI_USER@$RASPBERRY_PI? ($HOSTNAME) " NEW_HOSTNAME;
+        if [ -z "$NEW_HOSTNAME" ]; then
+            NEW_HOSTNAME=$HOSTNAME;
+        fi
+    done
+    if [ "$HOSTNAME" != "$NEW_HOSTNAME" ]; then
+        echo "    Updating hostname to $NEW_HOSTNAME...";
+        sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "echo \"$NEW_HOSTNAME\" | sudo tee /etc/hostname > /dev/null";
+        sshpass -p $RASPBERRY_PI_USER_PASSWORD ssh $RASPBERRY_PI_USER@$RASPBERRY_PI "sudo sed -i \"s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g\" /etc/hosts";
+    fi
+fi
 
 # get a password to use for the new account
 echo "Creating account for $USER@$RASPBERRY_PI...";
