@@ -8,7 +8,7 @@ EXECUTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # get the name of the machine we are logging into
 RASPBERRY_PI=$1;
-if [ -z "$RASPBERRY_PI"  ]; then
+if [ -z "$RASPBERRY_PI" ]; then
     echo "Usage: $0 <hostname> <password>";
     exit;
 fi
