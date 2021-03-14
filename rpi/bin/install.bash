@@ -30,7 +30,7 @@ if [ ! -e "$configuredSensorFile" ]; then
 
     targetInstall="$installPath/$sensorName.bash";
     if [ -e "$targetInstall" ]; then
-        echo "Installing support for $sensorName";
+        echo "Installing support for $sensorName (this might take a little while)...";
         sudo $($targetInstall);
     fi
 
