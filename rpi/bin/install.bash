@@ -25,7 +25,7 @@ if [ ! -e "$configuredSensorFile" ]; then
     sensorPath="$executingDir/../sensors";
 
     echo "No sensor is configured. The choices are:";
-    find "$sensorPath" -printf '    %P\n' | sed -e "s/.py$//";
+    find "$sensorPath" -type f -printf '    %P\n' | sed -e "s/.py$//";
     read -p "Which sensor would you like to use? " sensorName;
 
     targetInstall="$installPath/$sensorName.bash";
