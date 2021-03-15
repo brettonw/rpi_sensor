@@ -49,7 +49,7 @@ if [ -e "$configuredSensorFile" ]; then
     serviceName="get-sensor.service";
     echo "Installing service \"$serviceName\"...";
     sudo systemctl stop "$serviceName";
-    cp "$executing/get-sensor.bash" "$binPath/";
+    cp "$executingDir/get-sensor.bash" "$binPath/";
     sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
     sudo systemctl enable "$serviceName";
     sudo systemctl start "$serviceName";
