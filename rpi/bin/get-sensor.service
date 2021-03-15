@@ -2,7 +2,7 @@
 Description=Get-Sensor
 
 [Service]
-ExecStart=/usr/bin/bash /home/brettonw/bin/get-sensor.sh
+ExecStart=/usr/bin/bash /home/brettonw/bin/get-sensor.bash
 Restart=on-abort
 User=brettonw
 Type=simple
