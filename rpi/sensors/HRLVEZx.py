@@ -4,44 +4,67 @@ from time import time
 from time import sleep
 from serial import Serial
 
+noValue = 0
+minValue = 300
+
 # data from the Maxbotics sensor comes through serial as a stream of constant
 # size, 6 bytes each "R0000\r". We want to wait until we have at least 11
-# characters, as we'll be guaranteed to have a full sequence.
-# once we have a read, find the first R, then use that offset to find the index
-# of the last R in the buffer with a full read in it, and extract the four
-# digits right after that as the distance in mm
+# characters, as we'll be guaranteed to have a full sequence in case we jumped
+# in at the second character. once we have a read, find the first R, then use
+# that offset to find the index of the last R in the buffer with a full read in
+# it, and extract the four digits right after that as the distance in mm
 def measure():
     ser = Serial("/dev/serial0", 9600, 8, 'N', 1, timeout=1)
-    timeOut = 0.5
-    result = -1
+    timeOut = 1
+    timeStart = time()
+    endTime = timeStart + timeOut
+
+    # eat any existing data in the serial pipe
+    while time() < endTime:
+        bytesToRead = ser.inWaiting()
+        if bytesToRead > 0:
+            ser.read(bytesToRead)
+        else:
+            break
+
+    # now try to get a measurement
+    result = noValue
     guaranteedRead = 11
     fullReadSize = 6
     digitsReadSize = 4
-    timeStart = time()
-    while time() < timeStart + timeOut:
+    while time() < endTime:
         bytesToRead = ser.inWaiting()
         if bytesToRead >= guaranteedRead:
             readBytes = ser.read(bytesToRead)
-            print ("READ: {} bytes = {}".format (bytesToRead, readBytes))
+            #print ("READ: {} bytes = {}".format (bytesToRead, readBytes))
             rIndex = readBytes.find (b'R')
-            print ("  rIndex: {}".format (rIndex))
+            #print ("  rIndex: {}".format (rIndex))
             fullReadCount = int ((len (readBytes) - rIndex) / fullReadSize) - 1
-            print ("  fullReadCount: {}".format (fullReadCount))
+            #print ("  fullReadCount: {}".format (fullReadCount))
             readIndex = rIndex + (fullReadCount * fullReadSize) + 1
             readEnd = readIndex + digitsReadSize
-            print ("  slice from {} to {}: {}".format (readIndex, readEnd, readBytes[readIndex:readEnd]))
-            print ("  readBytes[readIndex]: {} ({})".format (readBytes[readIndex], int (readBytes[readIndex])))
+            #print ("  slice from {} to {}: {}".format (readIndex, readEnd, readBytes[readIndex:readEnd]))
+            #print ("  readBytes[readIndex]: {} ({})".format (readBytes[readIndex], int (readBytes[readIndex])))
             while readBytes[readIndex] == b'0'[0]:
                 readIndex += 1
             readSlice = readBytes[readIndex:readEnd]
             result = int (readSlice)
-            print (" {} parses as {}".format (readSlice, result))
+            #print (" {} parses as {}".format (readSlice, result))
             break
     ser.close()
     return result
 
 while True:
-    measure()
+    samples = 3
+    currentSample = 0
+    accumulator = 0
+    while (currentSample < samples):
+        sample = measure()
+        if (sample >= minValue):
+            currentSample += 1
+            accumulator += sample
+    measurement = accumulator / samples
+    print ("Measurement: {}".format (measurement))
     sleep (1)
 
 
