@@ -30,6 +30,7 @@ def measure():
             readIndex = rIndex + (fullReadCount * fullReadSize) + 1
             readEnd = readIndex + digitsReadSize
             print ("  slice from {} to {}: {}".format (readIndex, readEnd, readBytes[readIndex:readEnd]))
+            print ("  readBytes[readIndex]: {} ({})".format (readBytes[readIndex], int (readBytes[readIndex])))
             while readBytes[readIndex] == '0':
                 readIndex += 1
             readSlice = readBytes[readIndex:readEnd]
