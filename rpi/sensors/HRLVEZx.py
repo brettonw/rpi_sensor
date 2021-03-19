@@ -54,17 +54,15 @@ def measure():
     ser.close()
     return result
 
-while True:
-    samples = 3
-    currentSample = 0
-    accumulator = 0
-    while (currentSample < samples):
-        sample = measure()
-        if (sample >= minValue):
-            currentSample += 1
-            accumulator += sample
-    measurement = accumulator / samples
-    print ("Measurement: {}".format (measurement))
-    sleep (1)
+samples = 3
+currentSample = 0
+accumulator = 0
+while (currentSample < samples):
+    sample = measure()
+    if (sample >= minValue):
+        currentSample += 1
+        accumulator += sample
+measurement = accumulator / samples
+print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\"".format(measurement))
 
 
