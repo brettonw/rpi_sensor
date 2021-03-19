@@ -8,16 +8,17 @@ from time import sleep
 # 5 samples
 minSamples = 5
 sampleList = []
-i2c = board.I2C()
+sensor = SI7021 (board.I2C())
 while (len(sampleList) < minSamples):
-    sampleList.append(SI7021 (i2c))
-    sleep (0.25)
+    sampleList.append({ "temperature": sensor.temperature, "relative_humidity": sensor.relative_humidity})
+    sleep (0.1)
 
 # split the samples out into tuples that can be used in statistics
-temperatures = tuple (i.temperature for i in sampleList)
-humidities = tuple (i.relative_humidity for i in sampleList)
+temperatures = tuple (i["temperature"] for i in sampleList)
+relative_humidities = tuple (i["relative_humidity"] for i in sampleList)
 
 # output the result
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-stdev\": {:5.3f}, \"humidity\": {:5.3f}, \"humidity-unit\": \"%\", \"humidity-stdev\": {:5.3f}"
-      .format(mean (temperatures), stdev (temperatures), mean (humidities), stdev(humidities))
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-stdev\": {:5.3f}, \"relative_humidity\": {:5.3f}, \"relative_humidity-unit\": \"%\", \"relative_humidity-stdev\": {:5.3f}"
+      .format(mean (temperatures), stdev (temperatures), mean (relative_humidities), stdev(relative_humidities))
       )
+

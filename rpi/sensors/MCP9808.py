@@ -8,10 +8,10 @@ from time import sleep
 # 5 samples
 minSamples = 5
 sampleList = []
-i2c = board.I2C()
+sensor = MCP9808 (board.I2C())
 while (len(sampleList) < minSamples):
-    sampleList.append(MCP9808 (i2c))
-    sleep (0.25)
+    sampleList.append({ "temperature": sensor.temperature () })
+    sleep (0.1)
 
 # split the samples out into tuples that can be used in statistics
 temperatures = tuple (i.temperature for i in sampleList)
