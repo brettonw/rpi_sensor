@@ -42,6 +42,6 @@ def measure():
 
 while True:
     measure()
-    sleep (0.05)
+    sleep (1)
 
 
