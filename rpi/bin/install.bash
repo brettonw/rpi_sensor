@@ -55,3 +55,6 @@ if [ -e "$configuredSensorFile" ]; then
     sudo systemctl start "$serviceName";
 fi
 echo "Done.";
+
+# reboot the raspberry pi
+sudo reboot now;
