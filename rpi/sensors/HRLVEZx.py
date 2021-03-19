@@ -16,20 +16,25 @@ def measure():
     result = -1
     guaranteedRead = 11
     fullReadSize = 6
+    digitsReadSize = 4
     timeStart = time()
     while time() < timeStart + timeOut:
         bytesToRead = ser.inWaiting()
         if bytesToRead >= guaranteedRead:
             readBytes = ser.read(bytesToRead)
+            print ("READ: {} bytes = {}".format (bytesToRead, readBytes))
             rIndex = readBytes.find (b'R')
-            fullReadCountIndex = int ((len (readBytes) - rIndex) / fullReadSize) - 1
-            readIndex = rIndex + (fullReadCountIndex * fullReadSize) + 1
-            readEnd = readIndex + 4
-            print (readBytes[readIndex:readEnd])
+            print ("  rIndex: {}".format (rIndex))
+            fullReadCount = int ((len (readBytes) - rIndex) / fullReadSize) - 1
+            print ("  fullReadCount: {}".format (fullReadCount))
+            readIndex = rIndex + (fullReadCount * fullReadSize) + 1
+            readEnd = readIndex + digitsReadSize
+            print ("  slice from {} to {}: {}".format (readBytes[readIndex:readEnd]))
             while readBytes[readIndex] == '0':
                 readIndex += 1
-            result = int (readBytes[readIndex:readEnd])
-            print ("  parses as {}".format (result))
+            readSlice = readBytes[readIndex:readEnd]
+            result = int (readSlice)
+            print (" {} parses as {}".format (readSlice, result))
             break
     ser.close()
     return result
