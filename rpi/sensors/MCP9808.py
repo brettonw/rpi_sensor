@@ -12,7 +12,7 @@ while (len(sampleList) < minSamples):
     sampleList.append(MCP9808 (i2c))
 
 # split the samples out into tuples that can be used in statistics
-temperatures = tuple ((i.temperature) ** 2 for i in sampleList)
+temperatures = tuple (i.temperature for i in sampleList)
 
 # output the result
 print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-variance\": {:5.3f}"
