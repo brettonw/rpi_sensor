@@ -2,7 +2,7 @@
 
 import board
 from adafruit_mcp9808 import MCP9808
-from statistics import mean, variance
+from statistics import mean, stdev
 from time import sleep
 
 # 5 samples
@@ -17,7 +17,7 @@ while (len(sampleList) < minSamples):
 temperatures = tuple (i.temperature for i in sampleList)
 
 # output the result
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-variance\": {:5.3f}"
-      .format(mean (temperatures), variance (temperatures))
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-stdev\": {:5.3f}"
+      .format(mean (temperatures), stdev (temperatures))
       )
 

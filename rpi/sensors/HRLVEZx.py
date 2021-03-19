@@ -2,7 +2,7 @@
 
 from time import time, sleep
 from serial import Serial
-from statistics import mean, variance
+from statistics import mean, stdev
 
 noValue = 0
 minValue = 300
@@ -55,6 +55,6 @@ while (len(sampleList) < minSamples):
     sample = measure()
     if (sample >= minValue):
         sampleList.append(sample)
-print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\", \"distance-variance\": {:5.3f}".format(mean (sampleList), variance (sampleList)))
+print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\", \"distance-stdev\": {:5.3f}".format(mean (sampleList), stdev (sampleList)))
 
 

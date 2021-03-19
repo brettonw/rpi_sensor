@@ -2,7 +2,7 @@
 
 import board
 from adafruit_hts221 import HTS221
-from statistics import mean, variance
+from statistics import mean, stdev
 from time import sleep
 
 # 5 samples
@@ -18,7 +18,7 @@ temperatures = tuple (i.temperature for i in sampleList)
 humidities = tuple (i.relative_humidity for i in sampleList)
 
 # output the result
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-variance\": {:5.3f}, \"humidity\": {:5.3f}, \"humidity-unit\": \"%\", \"humidity-variance\": {:5.3f}"
-      .format(mean (temperatures), variance (temperatures), mean (humidities), variance(humidities))
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-stdev\": {:5.3f}, \"humidity\": {:5.3f}, \"humidity-unit\": \"%\", \"humidity-stdev\": {:5.3f}"
+      .format(mean (temperatures), stdev (temperatures), mean (humidities), stdev(humidities))
       )
 
