@@ -64,7 +64,7 @@ while (len(sampleList) < minSamples) or (variance() > maxVariance):
     sample = measure()
     if (sample >= minValue):
         sampleList.append(sample)
-        print ("  sample: {:5.3f}, count: {}, mean: {:5.3f}, variance: {5.3f}".format(sample, len (sampleList), mean (), variance ()))
+        print ("  sample: {:5.3f}, count: {}, mean: {:5.3f}, variance: {:5.3f}".format(sample, len (sampleList), mean (), variance ()))
     else:
         print ("  reject: {:5.3f}".format (sample))
 print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\"".format(mean ()))
