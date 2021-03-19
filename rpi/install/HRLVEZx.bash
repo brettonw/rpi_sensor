@@ -2,7 +2,6 @@
 
 sudo pip3 install pyserial;
 
-
 # add to /boot/config.txt
 CONFIG="/boot/config.txt";
 
