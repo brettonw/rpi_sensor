@@ -36,33 +36,37 @@ def measure():
         bytesToRead = ser.inWaiting()
         if bytesToRead >= guaranteedRead:
             readBytes = ser.read(bytesToRead)
-            #print ("READ: {} bytes = {}".format (bytesToRead, readBytes))
             rIndex = readBytes.find (b'R')
-            #print ("  rIndex: {}".format (rIndex))
             fullReadCount = int ((len (readBytes) - rIndex) / fullReadSize) - 1
-            #print ("  fullReadCount: {}".format (fullReadCount))
             readIndex = rIndex + (fullReadCount * fullReadSize) + 1
             readEnd = readIndex + digitsReadSize
-            #print ("  slice from {} to {}: {}".format (readIndex, readEnd, readBytes[readIndex:readEnd]))
-            #print ("  readBytes[readIndex]: {} ({})".format (readBytes[readIndex], int (readBytes[readIndex])))
             while readBytes[readIndex] == b'0'[0]:
                 readIndex += 1
             readSlice = readBytes[readIndex:readEnd]
             result = int (readSlice)
-            #print (" {} parses as {}".format (readSlice, result))
             break
     ser.close()
     return result
 
-samples = 3
-currentSample = 0
-accumulator = 0
-while (currentSample < samples):
+sampleList = []
+def mean():
+    return sum(sampleList) / len(sampleList)
+
+def variance():
+    expected = mean ()
+    return sum((i - expected) ** 2 for i in sampleList) / len(sampleList)
+
+# gather samples until the variance is below a threshold
+minSamples = 3
+maxVariance = 5
+print ("Start")
+while (len(sampleList) < minSamples) or (variance() > maxVariance):
     sample = measure()
     if (sample >= minValue):
-        currentSample += 1
-        accumulator += sample
-measurement = accumulator / samples
-print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\"".format(measurement))
+        sampleList.append(sample)
+        print ("  sample: {:5.3f}, count: {}, mean: {:5.3f}, variance: {5.3f}".format(sample, len (sampleList), mean (), variance ()))
+    else:
+        print ("  reject: {:5.3f}".format (sample))
+print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\"".format(mean ()))
 
 
