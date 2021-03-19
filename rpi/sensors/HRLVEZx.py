@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from time import time
+from time import time, sleep
 from serial import Serial
 from statistics import mean, variance
 

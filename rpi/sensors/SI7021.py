@@ -3,6 +3,7 @@
 import board
 from adafruit_si7021 import SI7021
 from statistics import mean, variance
+from time import sleep
 
 # 5 samples
 minSamples = 5
@@ -10,6 +11,7 @@ sampleList = []
 i2c = board.I2C()
 while (len(sampleList) < minSamples):
     sampleList.append(SI7021 (i2c))
+    sleep (0.25)
 
 # split the samples out into tuples that can be used in statistics
 temperatures = tuple (i.temperature for i in sampleList)
