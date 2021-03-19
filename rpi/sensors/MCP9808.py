@@ -1,10 +1,21 @@
 #! /usr/bin/env python3
 
 import board
-import adafruit_mcp9808
+from adafruit_mcp9808 import MCP9808
+from statistics import mean, variance
 
-sensor = adafruit_mcp9808.MCP9808 (board.I2C())
+# 5 samples
+minSamples = 5
+sampleList = []
+i2c = board.I2C()
+while (len(sampleList) < minSamples):
+    sampleList.append(MCP9808 (i2c))
 
-# temperature/relative humidity/pressure
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\"".format(sensor.temperature))
+# split the samples out into tuples that can be used in statistics
+temperatures = tuple ((i.temperature) ** 2 for i in sampleList)
+
+# output the result
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-variance\": {:5.3f}"
+      .format(mean (temperatures), variance (temperatures))
+      )
 

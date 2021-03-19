@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
 from time import time
-from time import sleep
 from serial import Serial
+from statistics import mean, variance
 
 noValue = 0
 minValue = 300
@@ -48,25 +48,13 @@ def measure():
     ser.close()
     return result
 
+# gather 5 samples
+minSamples = 5
 sampleList = []
-def mean():
-    return sum(sampleList) / len(sampleList)
-
-def variance():
-    expected = mean ()
-    return sum((i - expected) ** 2 for i in sampleList) / len(sampleList)
-
-# gather samples until the variance is below a threshold
-minSamples = 3
-maxVariance = 5
-print ("Start")
-while (len(sampleList) < minSamples) or (variance() > maxVariance):
+while (len(sampleList) < minSamples):
     sample = measure()
     if (sample >= minValue):
         sampleList.append(sample)
-        print ("  sample: {:5.3f}, count: {}, mean: {:5.3f}, variance: {:5.3f}".format(sample, len (sampleList), mean (), variance ()))
-    else:
-        print ("  reject: {:5.3f}".format (sample))
-print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\"".format(mean ()))
+print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\", \"distance-variance\": {:5.3f}".format(mean (sampleList), variance (sampleList)))
 
 

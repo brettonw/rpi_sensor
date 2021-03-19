@@ -1,9 +1,22 @@
 #! /usr/bin/env python3
 
 import board
-import adafruit_hts221
+from adafruit_hts221 import HTS221
+from statistics import mean, variance
 
-sensor = adafruit_hts221.HTS221 (board.I2C())
+# 5 samples
+minSamples = 5
+sampleList = []
+i2c = board.I2C()
+while (len(sampleList) < minSamples):
+    sampleList.append(HTS221 (i2c))
 
-# temperature/relative humidity/pressure
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"humidity\": {:5.3f}, \"humidity-unit\": \"%\"".format(sensor.temperature, sensor.relative_humidity))
+# split the samples out into tuples that can be used in statistics
+temperatures = tuple ((i.temperature) ** 2 for i in sampleList)
+humidities = tuple ((i.relative_humidity) ** 2 for i in sampleList)
+
+# output the result
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-variance\": {:5.3f}, \"humidity\": {:5.3f}, \"humidity-unit\": \"%\", \"humidity-variance\": {:5.3f}"
+      .format(mean (temperatures), variance (temperatures), mean (humidities), variance(humidities))
+      )
+
