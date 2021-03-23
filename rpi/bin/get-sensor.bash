@@ -21,23 +21,25 @@ do
     # temperature/relative humidity/pressure
     timestamp=$(date +%s%3N);
     sensorRead=$(/home/brettonw/bin/sensor.py);
-    sensorOutput="{ \"timestamp\": $timestamp, $sensorRead }";
-    echo "    , $sensorOutput" >> $rawHistoryFile;
-    echo "$sensorOutput" > $jsonNowFile;
+    if [ ! -z "$sensorRead" ]; then
+        sensorOutput="{ \"timestamp\": $timestamp, $sensorRead }";
+        echo "    , $sensorOutput" >> $rawHistoryFile;
+        echo "$sensorOutput" > $jsonNowFile;
 
-    # increment the counter, then once per minute consolidate the JSON output
-    counter=$(( counter + 1 ));
-    modulo=$(( counter % 6));
-    if [ $modulo -eq 0 ]; then
-        # limit the log output to 10G, about 1 day at every 10 seconds
-        tail --lines 10K $rawHistoryFile > "$rawHistoryFile.tmp";
-        mv "$rawHistoryFile.tmp" $rawHistoryFile;
+        # increment the counter, then once per minute consolidate the JSON output
+        counter=$(( counter + 1 ));
+        modulo=$(( counter % 6));
+        if [ $modulo -eq 0 ]; then
+            # limit the log output to 10G, about 1 day at every 10 seconds
+            tail --lines 10K $rawHistoryFile > "$rawHistoryFile.tmp";
+            mv "$rawHistoryFile.tmp" $rawHistoryFile;
 
-        # concat everything into the JSON log, this is a bit ugly
-        echo "[" > $jsonHistoryFile;
-        echo "      { \"timestamp\": 0 }" >> $jsonHistoryFile;
-        cat $rawHistoryFile >> $jsonHistoryFile;
-        echo "]" >> $jsonHistoryFile;
+            # concat everything into the JSON log, this is a bit ugly
+            echo "[" > $jsonHistoryFile;
+            echo "      { \"timestamp\": 0 }" >> $jsonHistoryFile;
+            cat $rawHistoryFile >> $jsonHistoryFile;
+            echo "]" >> $jsonHistoryFile;
+        fi
     fi
 
     # sleep for a little bit (making the whole loop land on 10 second intervals)
