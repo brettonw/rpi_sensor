@@ -20,7 +20,7 @@ do
     # set the value to "-" to indicate "no information"):
     # temperature/relative humidity/pressure
     timestamp=$(date +%s%3N);
-    sensorRead=$(/home/brettonw/bin/sensor.py);
+    sensorRead=$(/home/brettonw/bin/sensor.py | sed -e "/^ *$//");
     if [ ! -z "$sensorRead" ]; then
         sensorOutput="{ \"timestamp\": $timestamp, $sensorRead }";
         echo "    , $sensorOutput" >> $rawHistoryFile;
