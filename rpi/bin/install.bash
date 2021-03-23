@@ -3,6 +3,11 @@
 # get the path where we are executing from
 executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+sensorName="";
+if [ "$#" -gt 0 ]; then
+    sensorName="$1";
+fi
+
 # create the "sensor" user
 user="brettonw";
 homePath="/home/$user";
@@ -20,13 +25,16 @@ fi
 # configure a sensor
 binPath="$homePath/bin";
 configuredSensorFile="$binPath/sensor.py";
-if [ ! -e "$configuredSensorFile" ]; then
+while [ ! -e "$configuredSensorFile" ]; do
     installPath="$executingDir/../install";
     sensorPath="$executingDir/../sensors";
 
-    echo "No sensor is configured. The choices are:";
-    find "$sensorPath" -type f -printf '    %P\n' | sed -e "s/.py$//";
-    read -p "Which sensor would you like to use? " sensorName;
+    # look to see if a sensor was already requested on the command line
+    if [ -z "$sensorName" ]; then
+        echo "No sensor is configured. The choices are:";
+        find "$sensorPath" -type f -printf '    %P\n' | sed -e "s/.py$//";
+        read -p "Which sensor would you like to use? " sensorName;
+    fi
 
     targetInstall="$installPath/$sensorName.bash";
     if [ -e "$targetInstall" ]; then
@@ -39,21 +47,21 @@ if [ ! -e "$configuredSensorFile" ]; then
         echo "Linking $sensorName";
         ln -s "$targetSensor" "$configuredSensorFile";
     fi
-fi
+    sensorName="";
+done
 
-if [ -e "$configuredSensorFile" ]; then
-    existing=$(ls -l "$configuredSensorFile" | sed -e "s/^.*-> //");
-    existing=$(basename "$existing" | sed -e "s/.py$//");
-    echo "Configured for sensor ($existing).";
-    # copy the service file to the lib directory and start it
-    serviceName="get-sensor.service";
-    echo "Installing service \"$serviceName\"...";
-    sudo systemctl stop "$serviceName";
-    cp "$executingDir/get-sensor.bash" "$binPath/";
-    sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
-    sudo systemctl enable "$serviceName";
-    sudo systemctl start "$serviceName";
-fi
+# configure the service
+existing=$(ls -l "$configuredSensorFile" | sed -e "s/^.*-> //");
+existing=$(basename "$existing" | sed -e "s/.py$//");
+echo "Configured for sensor ($existing).";
+# copy the service file to the lib directory and start it
+serviceName="get-sensor.service";
+echo "Installing service \"$serviceName\"...";
+sudo systemctl stop "$serviceName";
+cp "$executingDir/get-sensor.bash" "$binPath/";
+sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
+sudo systemctl enable "$serviceName";
+sudo systemctl start "$serviceName";
 echo "Done.";
 
 # reboot the raspberry pi

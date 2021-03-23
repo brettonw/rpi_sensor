@@ -4,6 +4,7 @@
 executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # configure a sensor
+existing="";
 workingPath="/home/brettonw/bin";
 sensorFile="$workingPath/sensor.py";
 if [ -e "$sensorFile" ]; then
@@ -13,4 +14,4 @@ if [ -e "$sensorFile" ]; then
   echo "Removed existing sensor configuration ($existing).";
 fi
 
-. $executingDir/install.bash;
+. $executingDir/install.bash $existing;
