@@ -37,4 +37,4 @@ for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=Tr
         printKeyValuePair ("replace_battery", int ((flags & UPS_replacebatt) > 0))
     else:
         if (kv[0] in wanted):
-            printKeyValuePair (kv[0], "\"{}\"".format (kv[1]))
+            printKeyValuePair (kv[0], kv[1])
