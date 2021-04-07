@@ -41,7 +41,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 # myTypes
-altTypeNames = { HUMIDITY : "Humidity" }
+altTypeNames = { RELATIVE_HUMIDITY : "Humidity" }
 def getTypeName (type):
     if (type in altTypeNames):
         return altTypeNames[type]
