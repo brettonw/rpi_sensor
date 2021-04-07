@@ -4,45 +4,37 @@ import subprocess
 
 # the key names we want to report with
 reportNames = {
-    "LINEV"             : "line_voltage",
-    "LOADPCT"           : "load_percentage",
-    "BCHARGE"           : "battery_charge",
-    "TIMELEFT"          : "time_left",
-    "ONLINE"            : "on_line",
-    "ONBATTERY"         : "on_battery",
-    "OVERLOAD"          : "overload",
-    "BATTERY_LOW"       : "battery_low",
-    "REPLACE_BATTERY"   : "replace_battery"
+    "LINEV"             : "line_voltage/ Volts",
+    "LOADPCT"           : "load_percentage/ Percent",
+    "BCHARGE"           : "battery_charge/ Percent",
+    "TIMELEFT"          : "time_left/ Minutes"
 }
 
 # helper to print each field we care about
 separator = ""
 def printKeyValuePair (key, value):
+    if (key in reportNames):
+        reportName = reportNames[key]
+        key, unit = reportName.split ("/",1)
+        value.replace(unit, "")
     global separator
     print ("{}\"{}\":{}".format (separator, key, value), end='')
     separator = ","
 
-# from apcupsd cource, statflag values are:
-#define UPS_calibration   0x00000001
-#define UPS_trim          0x00000002
-#define UPS_boost         0x00000004
-#define UPS_online        0x00000008
-#define UPS_onbatt        0x00000010
-#define UPS_overload      0x00000020
-#define UPS_battlow       0x00000040
-#define UPS_replacebatt   0x00000080
-flagValues = [ "CALIBRATION", "TRIM", "BOOST", "ONLINE", "ONBATTERY", "OVERLOAD", "BATTERY_LOW", "REPLACE_BATTERY" ]
+# from apcupsd cource, statflag values we care about are:
+UPS_online = 0x00000008
+UPS_onbatt = 0x00000010
+UPS_replacebatt = 0x00000080
 
 # get the apcups status and report the values we want
 wanted = { "LINEV", "LOADPCT", "BCHARGE", "TIMELEFT" }
 for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=True).stdout.splitlines():
     kv = [items.rstrip () for items in line.split (": ", 1)]
     if (kv[0] == "STATFLAG"):
-        # flags are reported as a hexadecimal number. we convert each flag to a 0 or 1 for output, but
-        # we only care about the last 5
+        # flags are reported as a hexadecimal number string. we make that into an int
         flags = int (kv[1], 16)
-        for flagIndex, flagName in enumerate(flagValues):
-            printKeyValuePair (flagName, int ((flags & (2 ** flagIndex)) > 0))
+        printKeyValuePair ("online", int ((flags & UPS_online) > 0))
+        printKeyValuePair ("replace_battery", int ((flags & UPS_replacebatt) > 0))
     else:
         if (kv[0] in wanted):
             printKeyValuePair (kv[0], "\"{}\"".format (kv[1]))
