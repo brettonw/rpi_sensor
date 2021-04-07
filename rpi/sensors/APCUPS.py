@@ -23,7 +23,7 @@ flagValues = [ "CALIBRATION", "TRIM", "BOOST", "ONLINE", "ONBATTERY", "OVERLOAD"
 # get the apcups status and report the values we want
 wanted = { "LINEV", "LOADPCT", "BCHARGE", "TIMELEFT" }
 for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=True).stdout.splitlines():
-    kv = [items.rstrip () for items in line.split (": ", 1)]
+    kv = [items.rstrip () for items in line.split (b": ", 1)]
     if (kv[0] == "STATFLAG"):
         # flags are reported as a hexadecimal number. we convert each flag to a 0 or 1 for output, but
         # we only care about the last 5
