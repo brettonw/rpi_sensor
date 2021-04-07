@@ -38,3 +38,4 @@ for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=Tr
     else:
         if (kv[0] in wanted):
             printKeyValuePair (kv[0], kv[1])
+print ()
