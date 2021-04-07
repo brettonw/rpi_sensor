@@ -1,0 +1,29 @@
+{
+  "name": "device 1",
+  "host": "192.168.128.10",
+  "components": [
+    {
+      "name" : "component 1", "driver" : "QRX375",
+      "values" :  {
+        "motion": { "type": "discrete", "values": [ "motion", "idle"] }
+      }
+    },
+    {
+      "name" : "distance", "driver" : "HRLVEZx",
+      "values" :  {
+        "distance": { "type": "numeric", "units": "mm", "min": 300, "max": 5000, "increment": 1 }
+      }
+    },
+    {
+      "name" : "door", "driver" : "SWITCH",
+      "values" :  {
+        "state": { "type": "discrete", "values": [ "open", "closed"] }
+      },
+      "actions": {
+        "open": {},
+        "close": {}
+      }
+    }
+
+  ]
+}

@@ -2,6 +2,19 @@
 
 import subprocess
 
+# the key names we want to report with
+reportNames = {
+    "LINEV"             : "line_voltage",
+    "LOADPCT"           : "load_percentage",
+    "BCHARGE"           : "battery_charge",
+    "TIMELEFT"          : "time_left",
+    "ONLINE"            : "on_line",
+    "ONBATTERY"         : "on_battery",
+    "OVERLOAD"          : "overload",
+    "BATTERY_LOW"       : "battery_low",
+    "REPLACE_BATTERY"   : "replace_battery"
+}
+
 # helper to print each field we care about
 separator = ""
 def printKeyValuePair (key, value):
@@ -29,8 +42,7 @@ for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=Tr
         # we only care about the last 5
         flags = int (kv[1], 16)
         for flagIndex, flagName in enumerate(flagValues):
-            if (flagIndex >= 3):
-                printKeyValuePair (flagName, int ((flags & (2 ** flagIndex)) > 0))
+            printKeyValuePair (flagName, int ((flags & (2 ** flagIndex)) > 0))
     else:
         if (kv[0] in wanted):
             printKeyValuePair (kv[0], "\"{}\"".format (kv[1]))

@@ -21,7 +21,7 @@ from urllib.error import URLError
 import json
 import logging
 from datetime import timedelta, datetime
-import constant
+from .constant import *
 
 _LOGGER = logging.getLogger(__name__)
 
