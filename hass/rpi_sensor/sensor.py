@@ -21,14 +21,9 @@ from urllib.error import URLError
 import json
 import logging
 from datetime import timedelta, datetime
+import constant
 
 _LOGGER = logging.getLogger(__name__)
-
-DOMAIN = "rpi_sensor"
-DOMAIN_DATA = DOMAIN + "data"
-
-# this essentially caches the last result for at least this long
-DATA_REFRESH_INTERVAL_MS = 10 * 1000
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -37,6 +32,14 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
+# myTypes
+altTypeNames = { constant.HUMIDITY : "Humidity" }
+def getTypeName (type):
+    if (type in altTypeNames):
+        return altTypeNames[type]
+    return type.capitalize()
+
+# the sensor api we will call to get data
 def api(host, fallback, refreshInterval):
     result = fallback
     try:
@@ -53,25 +56,25 @@ def api(host, fallback, refreshInterval):
 def setup_platform(hass, config, add_entities, discovery_info=None):
     # we want to store multiple sensors in our HASS domain, so if it hasn't been initialized we need
     # a new dictionary
-    if (not (DOMAIN in hass.data)):
-        hass.data[DOMAIN] = { }
-    dataHost = hass.data[DOMAIN]
+    if (not (constant.DOMAIN in hass.data)):
+        hass.data[constant.DOMAIN] = { }
+    dataHost = hass.data[constant.DOMAIN]
 
     # get a sample record from the sensor to create the needed entities
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
-    if ("humidity" in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "humidity", DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
-    if ("pressure" in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "pressure", DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
-    if ("temperature" in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], "temperature", DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
+    if (constant.RELATIVE_HUMIDITY in record):
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], constant.RELATIVE_HUMIDITY, DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
+    if (constant.PRESSURE in record):
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], constant.PRESSURE, DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
+    if (constant.TEMPERATURE in record):
+        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], constant.TEMPERATURE, DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
 
 class RpiSensor (Entity):
     def __init__(self, hass, host, name, type, device_class, unit_of_measurement):
         _LOGGER.debug( "Adding {} sensor from host ({})".format(type, host) )
         self._hass = hass
         self._host = host
-        self._name = "{} {}".format (name, type.capitalize ())
+        self._name = "{} {}".format (name, getTypeName(type))
         self._type = type
         self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
@@ -83,7 +86,7 @@ class RpiSensor (Entity):
 
     @property
     def state(self):
-        return self._hass.data[DOMAIN][self._host][self._type]
+        return self._hass.data[constant.DOMAIN][self._host][self._type]
 
     @property
     def device_class (self):
@@ -94,4 +97,4 @@ class RpiSensor (Entity):
         return self._unit_of_measurement
 
     def update(self):
-        self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
+        self._hass.data[constant.DOMAIN][self._host] = api (self._host, self._hass.data[constant.DOMAIN][self._host], constant.DATA_REFRESH_INTERVAL_MS)
