@@ -16,7 +16,7 @@ def printKeyValuePair (key, value):
     if (key in reportNames):
         reportName = reportNames[key]
         key, unit = reportName.split ("/",1)
-        value.replace(unit, "")
+        value = "{:3.1f}".format (float (value.replace(unit, "")))
     global separator
     print ("{}\"{}\":{}".format (separator, key, value), end='')
     separator = ","
