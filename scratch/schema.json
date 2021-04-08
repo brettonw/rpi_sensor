@@ -1,29 +1,58 @@
 {
-  "name": "device 1",
+  "name": "sample device",
+  "description": "An example schema for a composite device exposing a motion sensor, distance sensor, environment sensor, door control, and a UPS monitor",
   "host": "192.168.128.10",
   "components": [
     {
-      "name" : "component 1", "driver" : "QRX375",
+      "name" : "motion",
+      "driver" : "QRX375",
+      "description": "A motion sensor",
       "values" :  {
-        "motion": { "type": "discrete", "values": [ "motion", "idle"] }
+        "motion": { "description": "a two-state discrete sensor indicating motion", "type": "discrete", "values": [ "no", "yes"] }
       }
     },
     {
-      "name" : "distance", "driver" : "HRLVEZx",
+      "name" : "distance",
+      "driver" : "HRLVEZx",
+      "description": "A distance sensor",
       "values" :  {
-        "distance": { "type": "numeric", "units": "mm", "min": 300, "max": 5000, "increment": 1 }
+        "distance": { "description": "a numeric value sensor reporting the number of millimeters from the sensor to the nearest 'thing'", "type": "numeric", "units": "millimeter", "min": 300, "max": 5000, "resolution": 1 }
       }
     },
     {
-      "name" : "door", "driver" : "SWITCH",
+      "name" : "environment",
+      "driver" : "SI7021",
+      "description": "An environment sensor",
       "values" :  {
-        "state": { "type": "discrete", "values": [ "open", "closed"] }
+        "temperature": { "description": "a numerics value sensor reporting the ambient temperature", "type": "numeric", "units": "celsius", "min": 0, "max": 200, "resolution": 0.1 },
+        "pressure": { "description": "a numerics value sensor reporting the atmospheric pressure", "type": "numeric", "units": "hectopascal", "min": 300, "max": 5000, "resolution": 1 },
+        "relative_humidity": { "description": "a numerics value sensor reporting the relative humidity", "type": "numeric", "units": "percentage", "min": 300, "max": 5000, "resolution": 1 }
+      }
+    },
+    {
+      "name" : "door",
+      "driver" : "SWITCH",
+      "description": "A door control",
+      "values" :  {
+        "state": { "description": "A discrete valued sensor with a control to open and close a door.", "type": "discrete", "values": [ "opening", "open", "closing", "closed"] }
       },
       "actions": {
-        "open": {},
-        "close": {}
+        "open": { "description": "Open the door" },
+        "close": { "description": "Close the door" }
+      }
+    },
+    {
+      "name" : "ups",
+      "driver" : "APCUPS",
+      "description": "A UPS monitor",
+      "values" :  {
+        "line": { "description": "The voltage level of the line input", "type": "numeric", "units": "volt" },
+        "load": { "description": "The percentage of load capacity in use", "type": "discrete", "units": "percentage" },
+        "battery": { "description": "The charge level of the battery", "type": "discrete", "units": "percentage" },
+        "remaining": { "description": "How long the device could support the load on battery power", "type": "discrete", "units": "minute" },
+        "online": { "description": "Whether the unit is running on mains power or battery backup", "type": "discrete", "values": [ "no", "yes"] },
+        "replace": { "description": "Whether the battery needs to be replaced", "type": "discrete", "values": [ "no", "yes"] }
       }
     }
-
   ]
 }
