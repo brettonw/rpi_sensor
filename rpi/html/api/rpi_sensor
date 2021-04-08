@@ -1,0 +1,10 @@
+#! /usr/bin/env python3
+
+import cgitb
+
+# enable cgi exception handler so we can get error reports
+cgitb.enable ()
+
+print ("Content-Type: application/json")
+print ()
+print ("{ \"result\": \"OK\" }")
