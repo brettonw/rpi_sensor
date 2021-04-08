@@ -2,13 +2,6 @@
 
 import subprocess
 
-# the key names we want to report with
-reportNames = {
-    "LINEV"    : "line/ Volts",
-    "LOADPCT"  : "load/ Percent",
-    "BCHARGE"  : "battery/ Percent",
-    "TIMELEFT" : "remaining/ Minutes"
-}
 # helper to print each field we care about
 separator = ""
 def printKeyValuePair (key, value):
@@ -16,6 +9,15 @@ def printKeyValuePair (key, value):
     print ("{}\"{}\":{}".format (separator, key, value), end='')
     separator = ","
 
+# the key names we want to report with
+reportNames = {
+    "LINEV"    : "line/ Volts",
+    "LOADPCT"  : "load/ Percent",
+    "BCHARGE"  : "battery/ Percent",
+    "TIMELEFT" : "remaining/ Minutes"
+}
+
+# format a key value pair from the non-flag section of the report
 def printWantedKeyValuePair (key, value):
     if (key in reportNames):
         reportName = reportNames[key]
@@ -28,7 +30,6 @@ yesno = ["\"no\"", "\"yes\""]
 
 # from apcupsd cource, statflag values we care about are:
 UPS_online = 0x00000008
-UPS_onbatt = 0x00000010
 UPS_replacebatt = 0x00000080
 
 # get the apcups status and report the values we want
