@@ -23,6 +23,9 @@ def printWantedKeyValuePair (key, value):
         value = "{:3.1f}".format (float (value.replace(unit, "")))
         printKeyValuePair(key, value)
 
+# yes no array
+yesno = ["\"no\"", "\"yes\""]
+
 # from apcupsd cource, statflag values we care about are:
 UPS_online = 0x00000008
 UPS_onbatt = 0x00000010
@@ -34,8 +37,8 @@ for line in subprocess.run(['/usr/sbin/apcaccess'], capture_output=True, text=Tr
     if (kv[0] == "STATFLAG"):
         # flags are reported as a hexadecimal number string. we make that into an int
         flags = int (kv[1], 16)
-        printKeyValuePair ("online", int ((flags & UPS_online) > 0))
-        printKeyValuePair ("replace", int ((flags & UPS_replacebatt) > 0))
+        printKeyValuePair ("online", yesno[int ((flags & UPS_online) > 0)])
+        printKeyValuePair ("replace", yesno[int ((flags & UPS_replacebatt) > 0)])
     else:
         printWantedKeyValuePair (kv[0], kv[1])
 print ()
