@@ -1,10 +1,69 @@
-#! /usr/bin/env python3
+#! /usr/local/bin/python3
 
-import cgitb
+import io
+import os
+import sys
+import json
 
-# enable cgi exception handler so we can get error reports
-cgitb.enable ()
+class Cgi:
+    # environment constants
+    QUERY_STRING = "QUERY_STRING"
+    REQUEST_METHOD = "REQUEST_METHOD"
+    REQUEST_METHOD_POST = "POST"
+    CONTENT_LENGTH = "CONTENT_LENGTH"
+    CONTENT_TYPE = "CONTENT_TYPE"
 
-print ("Content-Type: application/json")
-print ()
-print ("{ \"result\": \"OK\" }")
+    # constants we use internally (bedrock)
+    MIME_TYPE_JSON = "application/json"
+    UTF8 = "utf-8"
+
+    QUERY = "query"
+
+    STATUS = "status"
+    STATUS_OK = "ok"
+    STATUS_ERROR = "error"
+
+    def __init__(self, env = os.environ):
+        # default response
+        # we only respond to post events so that HTTPS can mask exchanges
+        if (Cgi.REQUEST_METHOD in env) and (env[Cgi.REQUEST_METHOD] == Cgi.REQUEST_METHOD_POST):
+            # and the type and length must be specified
+            if (Cgi.CONTENT_TYPE in env) and (Cgi.CONTENT_LENGTH in env):
+                mimeType, encoding = env[Cgi.CONTENT_TYPE].split("; charset=", 1)
+                # we require that the POST data is text
+                inputStream = io.TextIOWrapper(sys.stdin.buffer, encoding=encoding)
+                inputJson = inputStream.read(int (env[Cgi.CONTENT_LENGTH]))
+                self.response = { Cgi.QUERY: json.loads(inputJson) }
+                self.response[Cgi.STATUS] = Cgi.STATUS_OK
+            else:
+                self.error ("Request has no content")
+        else:
+            self.error ("Unsupported Request, must be POST")
+
+        self.headers = {
+            Cgi.CONTENT_TYPE: Cgi.MIME_TYPE_JSON + "; charset=" + Cgi.UTF8
+            #, "X-Content-Type-Options": "nosniff",
+            #, "Access-Control-Allow-Origin": "*",
+            #, "Access-Control-Allow-Headers": "*",
+            #, "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
+        }
+
+    def error (self, description):
+        self.request = { Cgi.STATUS: Cgi.STATUS_ERROR, Cgi.STATUS_ERROR : description }
+
+try:
+    cgi = Cgi ()
+
+    # print the headers...
+    for header in cgi.headers:
+        print ("{}: {}".format (header, cgi.headers[header]))
+    print ()
+
+    # print the response
+    print (json.dumps(cgi.response))
+except Exception as exception:
+    print ("{}:{}".format (Cgi.CONTENT_TYPE, "text/plain"))
+    print ()
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print("EXCEPTION ({}) in {}, LINE {}".format (exc_type, fname, exc_tb.tb_lineno))
