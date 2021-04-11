@@ -4,6 +4,10 @@ import io
 import os
 import sys
 import json
+import time
+
+# capture the start time
+startTime = time.time_ns()
 
 # because I disagree with the python languyage design
 false = False
@@ -59,7 +63,7 @@ class Bedrock:
             bedrockResponse[Bedrock.QUERY] = query
 
         # add the response time
-        bedrockResponse[Bedrock.RESPONSE_TIME_NS] = 1
+        bedrockResponse[Bedrock.RESPONSE_TIME_NS] = time.time_ns() - startTime
 
         # add the response if there is one
         if (response != None):
@@ -141,11 +145,11 @@ class CgiRequest:
         # this is just a base error - if we couldn't get a workable request
         CgiResponse.respond (CgiResponse.STATUS_BAD_REQUEST, "Bad Request ({} must be {}, {} must be {}, and {} > 0)".format (CgiRequest.METHOD, CgiRequest.METHOD_POST, CgiRequest.CONTENT_TYPE, MIME_TYPE_JSON, CgiRequest.CONTENT_LENGTH))
 
-
+# get the query
 query = CgiRequest.getAsDictionary()
 
 try:
-    # read the cgi
+    # try to handle the query
     Bedrock.handleRequest(query)
 
 except Exception as exception:
