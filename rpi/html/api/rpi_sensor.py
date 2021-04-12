@@ -1,9 +1,9 @@
 #! /usr/local/bin/python3
 
-from bedrock.bedrock import Bedrock
+from bedrock_cgi.service_base import ServiceBase
 
-def handleOk (query):
-    return { "OK": "OK" }
+def handleOk (event):
+    event.ok ({ "OK": "OK" })
 
-Bedrock.handleRequest()
+ServiceBase.respond()
 

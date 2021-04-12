@@ -6,4 +6,3 @@ true = True
 MIME_TYPE_JSON = "application/json"
 CHARSET = "charset"
 CHARSET_UTF8 = "utf-8"
-
