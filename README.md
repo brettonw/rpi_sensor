@@ -66,4 +66,6 @@ From your host computer, copy your .ssh directory and .bashrc to the new machine
 ```
 
 ### Testing the Bedrock service
+```
 curl -X POST -d '{"name": "linuxize", "event": "ok"}' -H "Content-Type: application/json; charset=UTF-8" http://localhost/cgi-bin/rpi_sensor.py -i
+```
