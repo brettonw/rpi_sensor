@@ -63,3 +63,7 @@ From your host computer, copy your .ssh directory and .bashrc to the new machine
 ### Install software
 ```
     sudo apt install git apache2 python3-pip python3-gpiozero -y
+```
+
+### Testing the Bedrock service
+curl -X POST -d '{"name": "linuxize", "event": "ok"}' -H "Content-Type: application/json; charset=UTF-8" http://localhost/cgi-bin/rpi_sensor.py -i
