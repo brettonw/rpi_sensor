@@ -39,19 +39,23 @@ class Bedrock:
         Bedrock.__respond (OK, query, RESPONSE, response)
 
     @staticmethod
-    def handleRequest (frame = None):
+    def handleRequest (globals = None):
         query = CgiRequest.getAsDictionary()
         try:
             # do some work to handle the query
             if (EVENT in query):
-                eventHandler = "handle{}".format (str(query[EVENT]).lower().capitalize())
-                if (frame != None):
-                    response = frame[eventHandler](query)
+                eventName = str(query[EVENT])
+                eventHandler = "handle{}".format (eventName.lower().capitalize())
+                if (globals == None):
+                    # get the globals from the calling frame
+                    globals = inspect.currentframe().f_back.f_globals
+                if (eventHandler in globals):
+                    response = globals[eventHandler](query)
+                    Bedrock.__ok (query, response)
                 else:
-                    response = inspect.stack()[1][0].f_globals[eventHandler] (query)
-                Bedrock.__ok (query, response)
+                    Bedrock.error(query, "No handler found for '{}' ({})".format (EVENT, eventName))
             else:
-                Bedrock.__ok (query, { "blah": "blah"})
+                Bedrock.error (query, "Missing '{}'".format (EVENT))
         except Exception as exception:
             Bedrock.errorOnException(query, exception)
 
