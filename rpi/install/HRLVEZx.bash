@@ -25,3 +25,5 @@ fi;
 CMDLINE="/boot/cmdline.txt";
 sed -i $CMDLINE -e "s/console=ttyAMA0,[0-9]\+ //";
 sed -i $CMDLINE -e "s/console=serial0,[0-9]\+ //";
+
+# NOTE THAT www-data user needs dialout and i2c group perms
