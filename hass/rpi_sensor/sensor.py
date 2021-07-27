@@ -10,7 +10,7 @@ sensor:
 
 """
 
-from homeassistant.const import CONF_HOST, CONF_NAME, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_UNIQUE_ID, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import voluptuous as vol
@@ -35,7 +35,8 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_HOST): cv.string,
-        vol.Required(CONF_NAME): cv.string
+        vol.Required(CONF_NAME): cv.string,
+        vol.Required(CONF_UNIQUE_ID): cv.string
     }
 )
 
@@ -70,18 +71,19 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     # get a sample record from the sensor to create the needed entities
     record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
     if (RELATIVE_HUMIDITY in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], RELATIVE_HUMIDITY, DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
+        add_entities([RpiSensor(hass, config, RELATIVE_HUMIDITY, DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
     if (PRESSURE in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], PRESSURE, DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
+        add_entities([RpiSensor(hass, config, PRESSURE, DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
     if (TEMPERATURE in record):
-        add_entities([RpiSensor(hass, config[CONF_HOST], config[CONF_NAME], TEMPERATURE, DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
+        add_entities([RpiSensor(hass, config, TEMPERATURE, DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
 
 class RpiSensor (Entity):
-    def __init__(self, hass, host, name, type, device_class, unit_of_measurement):
-        _LOGGER.debug( "Adding {} sensor from host ({})".format(type, host) )
+    def __init__(self, hass, config, type, device_class, unit_of_measurement):
+        _LOGGER.debug( "Adding {} sensor from host ({})".format(type, config[CONF_HOST]) )
         self._hass = hass
-        self._host = host
-        self._name = "{} {}".format (name, getTypeName(type))
+        self._host = config[CONF_HOST]
+        self._name = "{} {}".format (config[CONF_NAME], getTypeName(type))
+        self._unique_id = config[CONF_UNIQUE_ID];
         self._type = type
         self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
@@ -90,6 +92,10 @@ class RpiSensor (Entity):
     @property
     def name(self):
         return self._name
+
+    @property
+    def unique_id(self):
+        return self._unique_id
 
     @property
     def state(self):
