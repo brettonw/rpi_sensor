@@ -10,7 +10,7 @@ sensor:
 
 """
 
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_UNIQUE_ID, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
+from homeassistant.const import CONF_HOST, CONF_NAME, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import voluptuous as vol
@@ -35,8 +35,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_HOST): cv.string,
-        vol.Required(CONF_NAME): cv.string,
-        vol.Required(CONF_UNIQUE_ID): cv.string
+        vol.Required(CONF_NAME): cv.string
     }
 )
 
@@ -83,7 +82,7 @@ class RpiSensor (Entity):
         self._hass = hass
         self._host = config[CONF_HOST]
         self._name = "{} {}".format (config[CONF_NAME], getTypeName(type))
-        self._unique_id = config[CONF_UNIQUE_ID];
+        self._unique_id = "{}-{}-{}".format (config[CONF_HOST], config[CONF_NAME], getTypeName(type)).capitalize ();
         self._type = type
         self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
