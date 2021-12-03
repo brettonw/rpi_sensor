@@ -8,9 +8,12 @@ sensor:
     host: "rpi-test-0"
     scan_interval: 30
 
+NOTE:
+    HASS seems to have worked too hard to narrow the types of supported sensors. They would
+    be much better off going with general types, "percentage", "number with range", "list", etc.
 """
 
-from homeassistant.const import CONF_HOST, CONF_NAME, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
+from homeassistant.const import CONF_HOST, CONF_NAME, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, LENGTH_MILLIMETERS, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import voluptuous as vol
@@ -24,6 +27,9 @@ from datetime import datetime
 RELATIVE_HUMIDITY = "relative_humidity"
 TEMPERATURE = "temperature"
 PRESSURE = "pressure"
+DISTANCE = "distance"
+
+DEVICE_CLASS_NONE = "none";
 
 DOMAIN = "rpi_sensor"
 
@@ -75,6 +81,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         add_entities([RpiSensor(hass, config, PRESSURE, DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
     if (TEMPERATURE in record):
         add_entities([RpiSensor(hass, config, TEMPERATURE, DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
+    if (DISTANCE in record):
+        add_entities([RpiSensor(hass, config, DISTANCE, DEVICE_CLASS_NONE, LENGTH_MILLIMETERS)])
 
 class RpiSensor (Entity):
     def __init__(self, hass, config, type, device_class, unit_of_measurement):
