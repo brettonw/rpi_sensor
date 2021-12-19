@@ -1,0 +1,2 @@
+- RPI State (temperature, memory, CPU load)
+- Ping
