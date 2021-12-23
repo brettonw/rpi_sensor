@@ -58,7 +58,7 @@ def api(host, fallback, refreshInterval):
     try:
         now = datetime.timestamp(datetime.now()) * 1000
         if ((now - fallback["timestamp"]) > refreshInterval):
-            url = "http://{}.local/sensor/now.json".format (host)
+            url = "http://{}/sensor/now.json".format (host)
             req = request.Request(url)
             with request.urlopen(req) as response:
                 result = json.loads(response.read().decode())

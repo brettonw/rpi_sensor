@@ -1,2 +1,2 @@
-- RPI State (temperature, memory, CPU load)
+- RPI State (temperature, memory, CPU load, PoE current Draw, PoE fan speed)
 - Ping
