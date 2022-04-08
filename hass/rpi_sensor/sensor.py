@@ -13,9 +13,28 @@ NOTE:
     be much better off going with general types, "percentage", "number with range", "list", etc.
 """
 
-from homeassistant.const import CONF_HOST, CONF_NAME, TEMP_CELSIUS, PRESSURE_HPA, PERCENTAGE, LENGTH_MILLIMETERS, DEVICE_CLASS_VOLTAGE, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_PRESSURE
-from homeassistant.helpers.entity import Entity
-from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.components.sensor import (
+    SensorEntity,
+    PLATFORM_SCHEMA
+)
+from homeassistant.const import (
+    ATTR_UNIT_OF_MEASUREMENT,
+    CONF_ENTITY_ID,
+    CONF_HOST,
+    CONF_NAME,
+    CONF_UNIQUE_ID,
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
+    TEMP_CELSIUS,
+    PRESSURE_HPA,
+    PERCENTAGE,
+    LENGTH_MILLIMETERS,
+    DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_TEMPERATURE,
+    DEVICE_CLASS_HUMIDITY,
+    DEVICE_CLASS_PRESSURE
+)
+
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from urllib import request
@@ -24,14 +43,14 @@ import json
 import logging
 from datetime import datetime
 
+from . import DOMAIN, PLATFORMS
+
 RELATIVE_HUMIDITY = "relative_humidity"
 TEMPERATURE = "temperature"
 PRESSURE = "pressure"
 DISTANCE = "distance"
 
-DEVICE_CLASS_NONE = "none";
-
-DOMAIN = "rpi_sensor"
+DEVICE_CLASS_NONE = "none"
 
 # this essentially caches the last result for at least this long
 DATA_REFRESH_INTERVAL_MS = 10 * 1000
@@ -84,13 +103,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     if (DISTANCE in record):
         add_entities([RpiSensor(hass, config, DISTANCE, DEVICE_CLASS_NONE, LENGTH_MILLIMETERS)])
 
-class RpiSensor (Entity):
+class RpiSensor (SensorEntity):
     def __init__(self, hass, config, type, device_class, unit_of_measurement):
         _LOGGER.debug( "Adding {} sensor from host ({})".format(type, config[CONF_HOST]) )
         self._hass = hass
         self._host = config[CONF_HOST]
         self._name = "{} {}".format (config[CONF_NAME], getTypeName(type))
-        self._unique_id = "{}-{}-{}".format (config[CONF_HOST], config[CONF_NAME], getTypeName(type)).capitalize ();
+        self._unique_id = "{}-{}-{}".format (config[CONF_HOST], config[CONF_NAME], getTypeName(type)).capitalize ()
         self._type = type
         self._device_class = device_class
         self._unit_of_measurement = unit_of_measurement
