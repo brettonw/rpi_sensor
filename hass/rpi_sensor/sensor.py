@@ -12,45 +12,36 @@ NOTE:
     HASS seems to have worked too hard to narrow the types of supported sensors. They would
     be much better off going with general types, "percentage", "number with range", "list", etc.
 """
+from __future__ import annotations
+from urllib import request
+from urllib.error import URLError
+from datetime import datetime
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
     PLATFORM_SCHEMA
 )
+
 from homeassistant.const import (
-    ATTR_UNIT_OF_MEASUREMENT,
-    CONF_ENTITY_ID,
     CONF_HOST,
     CONF_NAME,
-    CONF_UNIQUE_ID,
-    STATE_UNAVAILABLE,
-    STATE_UNKNOWN,
     TEMP_CELSIUS,
     PRESSURE_HPA,
     PERCENTAGE,
     LENGTH_MILLIMETERS,
-    DEVICE_CLASS_VOLTAGE,
-    DEVICE_CLASS_TEMPERATURE,
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_PRESSURE
+    DEVICE_CLASS_TIMESTAMP as TIMESTAMP
 )
 
 import voluptuous as vol
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 import homeassistant.helpers.config_validation as cv
-from urllib import request
-from urllib.error import URLError
 import json
 import logging
-from datetime import datetime
 
-from . import DOMAIN, PLATFORMS
-
-RELATIVE_HUMIDITY = "relative_humidity"
-TEMPERATURE = "temperature"
-PRESSURE = "pressure"
-DISTANCE = "distance"
-
-DEVICE_CLASS_NONE = "none"
 
 # this essentially caches the last result for at least this long
 DATA_REFRESH_INTERVAL_MS = 10 * 1000
@@ -64,76 +55,73 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-# myTypes
-altTypeNames = { RELATIVE_HUMIDITY : "Humidity" }
-def getTypeName (type):
-    if (type in altTypeNames):
-        return altTypeNames[type]
-    return type.capitalize()
 
-# the sensor api we will call to get data
-def api(host, fallback, refreshInterval):
-    result = fallback
-    try:
-        now = datetime.timestamp(datetime.now()) * 1000
-        if ((now - fallback["timestamp"]) > refreshInterval):
-            url = "http://{}/sensor/now.json".format (host)
-            req = request.Request(url)
-            with request.urlopen(req) as response:
-                result = json.loads(response.read().decode())
-    except URLError as error:
-        _LOGGER.error( "Unable to retrieve data from Sensor host ({}): {}".format(host, error.reason) )
-    return result
+class RpiSensorType:
+    # these are constants used in the sensor setup on its host
+    RELATIVE_HUMIDITY = "relative_humidity"
+    TEMPERATURE = "temperature"
+    PRESSURE = "pressure"
+    DISTANCE = "distance"
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    # we want to store multiple sensors in our HASS domain, so if it hasn't been initialized we need
-    # a new dictionary
-    if (not (DOMAIN in hass.data)):
-        hass.data[DOMAIN] = { }
-    dataHost = hass.data[DOMAIN]
 
+def setup_platform(
+        hass: HomeAssistant,
+        config: ConfigType,
+        add_entities: AddEntitiesCallback,
+        discovery_info: DiscoveryInfoType | None = None
+) -> None:
     # get a sample record from the sensor to create the needed entities
-    record = dataHost[config[CONF_HOST]] = api (config[CONF_HOST], { "timestamp": 0 }, 0)
-    if (RELATIVE_HUMIDITY in record):
-        add_entities([RpiSensor(hass, config, RELATIVE_HUMIDITY, DEVICE_CLASS_HUMIDITY, PERCENTAGE)])
-    if (PRESSURE in record):
-        add_entities([RpiSensor(hass, config, PRESSURE, DEVICE_CLASS_PRESSURE, PRESSURE_HPA)])
-    if (TEMPERATURE in record):
-        add_entities([RpiSensor(hass, config, TEMPERATURE, DEVICE_CLASS_TEMPERATURE, TEMP_CELSIUS)])
-    if (DISTANCE in record):
-        add_entities([RpiSensor(hass, config, DISTANCE, DEVICE_CLASS_NONE, LENGTH_MILLIMETERS)])
+    record = RpiSensor.api(config[CONF_HOST], {TIMESTAMP: 0}, 0)
+    entities_to_add = []
+    if RpiSensorType.RELATIVE_HUMIDITY in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.RELATIVE_HUMIDITY, SensorDeviceClass.HUMIDITY, PERCENTAGE))
+    if RpiSensorType.PRESSURE in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.PRESSURE, SensorDeviceClass.PRESSURE, PRESSURE_HPA))
+    if RpiSensorType.TEMPERATURE in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.TEMPERATURE, SensorDeviceClass.TEMPERATURE, TEMP_CELSIUS))
+    if RpiSensorType.DISTANCE in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.DISTANCE, None, LENGTH_MILLIMETERS))
+    if len(entities_to_add) > 0:
+        add_entities(entities_to_add)
+
 
 class RpiSensor (SensorEntity):
-    def __init__(self, hass, config, type, device_class, unit_of_measurement):
-        _LOGGER.debug( "Adding {} sensor from host ({})".format(type, config[CONF_HOST]) )
-        self._hass = hass
+    alt_type_names = {RpiSensorType.RELATIVE_HUMIDITY: SensorDeviceClass.HUMIDITY}
+
+    @classmethod
+    def get_type_name(cls, type_name):
+        return (cls.alt_type_names[type_name] if type_name in cls.alt_type_names else type_name).capitalize()
+
+    @staticmethod
+    def api(host, fallback, refresh_interval):
+        # the sensor api we will call to get data
+        result = fallback
+        try:
+            now = datetime.timestamp(datetime.now()) * 1000
+            if (now - fallback[TIMESTAMP]) > refresh_interval:
+                url = f"http://{host}/sensor/now.json"
+                req = request.Request(url)
+                with request.urlopen(req) as response:
+                    result = json.loads(response.read().decode())
+        except URLError as error:
+            _LOGGER.error(f"Unable to retrieve data from Sensor host ({host}): {error.reason}")
+        return result
+
+    def __init__(self, config, record, type_name, device_class, unit_of_measurement):
+        _LOGGER.debug(f"Adding '{type_name}' sensor from host: ({config[CONF_HOST]})")
+
+        self._attr_name = f"{config[CONF_NAME]} {RpiSensor.get_type_name(type_name)}"
+        self._attr_native_unit_of_measurement = unit_of_measurement
+        self._attr_device_class = device_class
+        self._attr_state_class = SensorStateClass.MEASUREMENT
         self._host = config[CONF_HOST]
-        self._name = "{} {}".format (config[CONF_NAME], getTypeName(type))
-        self._unique_id = "{}-{}-{}".format (config[CONF_HOST], config[CONF_NAME], getTypeName(type)).capitalize ()
-        self._type = type
-        self._device_class = device_class
-        self._unit_of_measurement = unit_of_measurement
+        self._attr_unique_id = f"{config[CONF_HOST]}_{config[CONF_NAME]}_{RpiSensor.get_type_name(type_name)}".capitalize()
+        self._type_name = type_name
+        self._record = record
         self.update()
 
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def unique_id(self):
-        return self._unique_id
-
-    @property
-    def state(self):
-        return self._hass.data[DOMAIN][self._host][self._type]
-
-    @property
-    def device_class (self):
-        return self._device_class
-
-    @property
-    def unit_of_measurement(self):
-        return self._unit_of_measurement
-
     def update(self):
-        self._hass.data[DOMAIN][self._host] = api (self._host, self._hass.data[DOMAIN][self._host], DATA_REFRESH_INTERVAL_MS)
+        record = RpiSensor.api(self._host, self._record, DATA_REFRESH_INTERVAL_MS)
+        if (record is not None) and (self._type_name in record):
+            self._attr_native_value = record[self._type_name]
+        self._record = record
