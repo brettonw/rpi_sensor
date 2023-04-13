@@ -8,7 +8,7 @@ import json
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=["POST"])
 def process_request():
     req_data = request.get_json()
     # do some processing with the request data
@@ -19,5 +19,5 @@ def process_request():
 
     return jsonify(data)
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
