@@ -4,7 +4,6 @@ services:
   usvc:
     build: .
     ports:
-      - "8081:5000"
+      - "5001:5000"
     volumes:
       - .:/usvc
-    privileged: true

@@ -5,9 +5,6 @@ RUN apt-get update && \
     apt-get install -y python3-pip && \
     pip3 install flask
 
-# Copy the Flask server code to the container
-#COPY usvc.py /usvc/
-
 # Expose the port that the Flask server will run on
 EXPOSE 5000
 
