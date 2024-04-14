@@ -2,6 +2,10 @@ version: '3'
 
 services:
   usvc:
+    container_name: "usvc"
+    hostname: "usvc"
+    dns:
+      - "10.0.0.1"
     build: .
     ports:
       - "5001:5000"

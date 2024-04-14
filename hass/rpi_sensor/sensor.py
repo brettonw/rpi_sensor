@@ -27,11 +27,10 @@ from homeassistant.components.sensor import (
 from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
-    TEMP_CELSIUS,
-    PRESSURE_HPA,
-    PERCENTAGE,
-    LENGTH_MILLIMETERS,
-    DEVICE_CLASS_TIMESTAMP as TIMESTAMP
+    UnitOfTemperature,
+    UnitOfPressure,
+    UnitOfLength,
+    PERCENTAGE
 )
 
 import voluptuous as vol
@@ -71,16 +70,16 @@ def setup_platform(
         discovery_info: DiscoveryInfoType | None = None
 ) -> None:
     # get a sample record from the sensor to create the needed entities
-    record = RpiSensor.api(config[CONF_HOST], {TIMESTAMP: 0}, 0)
+    record = RpiSensor.api(config[CONF_HOST], {SensorDeviceClass.TIMESTAMP: 0}, 0)
     entities_to_add = []
     if RpiSensorType.RELATIVE_HUMIDITY in record:
         entities_to_add.append(RpiSensor(config, record, RpiSensorType.RELATIVE_HUMIDITY, SensorDeviceClass.HUMIDITY, PERCENTAGE))
     if RpiSensorType.PRESSURE in record:
-        entities_to_add.append(RpiSensor(config, record, RpiSensorType.PRESSURE, SensorDeviceClass.PRESSURE, PRESSURE_HPA))
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.PRESSURE, SensorDeviceClass.PRESSURE,UnitOfPressure.HPA))
     if RpiSensorType.TEMPERATURE in record:
-        entities_to_add.append(RpiSensor(config, record, RpiSensorType.TEMPERATURE, SensorDeviceClass.TEMPERATURE, TEMP_CELSIUS))
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.TEMPERATURE, SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS))
     if RpiSensorType.DISTANCE in record:
-        entities_to_add.append(RpiSensor(config, record, RpiSensorType.DISTANCE, None, LENGTH_MILLIMETERS))
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.DISTANCE, None, UnitOfLength.MILLIMETERS))
     if len(entities_to_add) > 0:
         add_entities(entities_to_add)
 
@@ -98,7 +97,7 @@ class RpiSensor (SensorEntity):
         result = fallback
         try:
             now = datetime.timestamp(datetime.now()) * 1000
-            if (now - fallback[TIMESTAMP]) > refresh_interval:
+            if (now - fallback[SensorDeviceClass.TIMESTAMP]) > refresh_interval:
                 url = f"http://{host}/sensor/now.json"
                 req = request.Request(url)
                 with request.urlopen(req) as response:
