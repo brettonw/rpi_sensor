@@ -9,6 +9,7 @@
 # conductivity calibration: https://www.instructables.com/Atlas-Scientific-EZO-EC-Calibration-Procedure/
 # ph calibration: https://www.instructables.com/Atlas-Scientific-EZO-PH-Calibration-Procedure/
 
+import time
 from AtlasI2C import (
     AtlasI2C
 )
@@ -25,7 +26,7 @@ def get_devices():
             moduletype = response.split(",")[1]
             response = device.query("name,?").split(",")[1]
         except IndexError:
-            print(">> WARNING: device at I2C address " + str(i) + " has not been identified as an EZO device, and will not be queried")
+            #print(">> WARNING: device at I2C address " + str(i) + " has not been identified as an EZO device, and will not be queried")
             continue
         device_list.append(AtlasI2C(address = i, moduletype = moduletype, name = response))
     return device_list
@@ -33,9 +34,13 @@ def get_devices():
 def main():
 
     device_list = get_devices()
+    device = device_list[0]
+
     for dev in device_list:
         dev.write("R")
+    time.sleep(device.long_timeout)
     for dev in device_list:
         print(dev.read())
+
 if __name__ == '__main__':
     main()
