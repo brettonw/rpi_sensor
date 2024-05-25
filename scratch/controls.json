@@ -1,0 +1,50 @@
+{
+  "i2c": [{
+    "name": "light",
+    "type": "dac",
+    "address": "0x5f",
+    "channel": [{
+      "name": "brightness",
+      "state": 10000
+    }, {
+      "name": "color",
+      "state": 4000
+    }]
+  }, {
+    "name": "unused",
+    "type": "dac",
+    "address": "0x5e",
+    "channel": [{
+      "name": "unused 0",
+      "state": 0
+    }, {
+      "name": "unused 1",
+      "state": 0
+    }]
+  }],
+  "gpio": [
+    {
+      "name": "relay 0",
+      "type": "relay",
+      "pin": 11,
+      "state": false
+    },
+    {
+      "name": "relay 1",
+      "type": "relay",
+      "pin": 13,
+      "state": false
+    },
+    {
+      "name": "relay 2",
+      "type": "relay",
+      "pin": 15,
+      "state": false
+    },
+    {
+      "name": "relay 3",
+      "type": "relay",
+      "pin": 16,
+      "state": false
+    }]
+}
