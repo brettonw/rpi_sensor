@@ -29,6 +29,10 @@ do
           sensorOutput="$sensorOutput, \"controls\": $controls";
         fi
 
+        # include cpu load
+        cpu_load=$(mpstat | tail -1 | awk '{split($0,a," "); print "\"usr\":" a[4] ", \"sys\":" a[6] ", \"idle\":" a[13]}');
+        sensorOutput="$sensorOutput, \"cpu-load\": $cpu_load, \"cpu-load-unit\": \"%\"";
+
         # include cpu temperature
         cpu_temperature=$(sed 's/.\{3\}$/.&/' <<< "$(</sys/class/thermal/thermal_zone0/temp)");
         sensorOutput="$sensorOutput, \"cpu-temperature\": $cpu_temperature, \"cpu-temperature-unit\": \"C\"";
