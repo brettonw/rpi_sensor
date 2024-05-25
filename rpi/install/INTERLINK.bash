@@ -7,4 +7,4 @@ EXECUTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 . $EXECUTING_DIR/../bin/install-i2c.bash;
 
 echo "copying dependencies";
-cp $EXECUTING_DIR/../dependencies/AtlasI2C.py /home/brettonw/bin/;
+#cp $EXECUTING_DIR/../dependencies/AtlasI2C.py /home/brettonw/bin/;
