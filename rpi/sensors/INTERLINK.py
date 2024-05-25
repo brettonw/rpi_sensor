@@ -42,7 +42,7 @@ def main():
     output = ""
     comma = ""
     for dev in device_list:
-        output += dev.read() + comma
+        output += comma + dev.read()
         comma = ","
     print(output)
 
