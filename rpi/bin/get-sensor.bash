@@ -5,8 +5,6 @@ echoerr() { echo "$@" 1>&2; }
 
 # setup the log file, dropped directly in the web server path
 sensorDir="/var/www/html/sensor";
-rawHistoryFile="$sensorDir/history.raw";
-jsonHistoryFile="$sensorDir/history.json";
 jsonNowFile="$sensorDir/now.json";
 controlsFile="$sensorDir/controls.json";
 
@@ -43,23 +41,7 @@ do
         sensorOutput="$sensorOutput }";
 
         # emit the results
-        echo "    , $sensorOutput" >> $rawHistoryFile;
         echo "$sensorOutput" > $jsonNowFile;
-
-        # increment the counter, then once per minute consolidate the JSON output
-        counter=$(( counter + 1 ));
-        modulo=$(( counter % 6));
-        if [ $modulo -eq 0 ]; then
-            # limit the log output to 10K, about 1 day at every 10 seconds
-            tail --lines 10K $rawHistoryFile > "$rawHistoryFile.tmp";
-            mv "$rawHistoryFile.tmp" $rawHistoryFile;
-
-            # concat everything into the JSON log, this is a bit ugly
-            echo "[" > $jsonHistoryFile;
-            echo "      { \"timestamp\": 0 }" >> $jsonHistoryFile;
-            cat $rawHistoryFile >> $jsonHistoryFile;
-            echo "]" >> $jsonHistoryFile;
-        fi
     fi
 
     # sleep for a little bit (making the whole loop land on 10 second intervals)
