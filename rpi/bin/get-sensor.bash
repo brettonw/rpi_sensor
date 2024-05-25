@@ -31,7 +31,7 @@ do
 
         # include cpu load
         cpu_load=$(mpstat | tail -1 | awk '{split($0,a," "); print "\"usr\":" a[4] ", \"sys\":" a[6] ", \"idle\":" a[13]}');
-        sensorOutput="$sensorOutput, \"cpu-load\": $cpu_load, \"cpu-load-unit\": \"%\"";
+        sensorOutput="$sensorOutput, \"cpu-load\": { $cpu_load }, \"cpu-load-unit\": \"%\"";
 
         # include cpu temperature
         cpu_temperature=$(sed 's/.\{3\}$/.&/' <<< "$(</sys/class/thermal/thermal_zone0/temp)");
@@ -52,6 +52,7 @@ do
     fi
 
     # sleep for a little bit (making the whole loop land on 10 second intervals)
+    # XXX might be nice to make it reliably 10 second intervals that are aligned to the clock minute
     targetTimestamp=$(( startTimestamp+(counter*10000) ));
     nowTimestamp=$(date +%s%3N);
     delta=$(( (targetTimestamp-nowTimestamp)/1000 ));
