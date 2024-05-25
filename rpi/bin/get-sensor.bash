@@ -42,6 +42,9 @@ do
 
         # emit the results
         echo "$sensorOutput" > $jsonNowFile;
+
+        # increment the counter
+        counter=$(( counter + 1 ));
     fi
 
     # sleep for a little bit (making the whole loop land on 10 second intervals)
