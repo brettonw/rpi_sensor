@@ -33,8 +33,9 @@ do
           sensorOutput="$sensorOutput, \"control\": $controls";
         fi
 
-        # include cpu load
-        cpu_load=$(mpstat | tail -1 | awk '{split($0,a," "); print "\"usr\":" a[4] ", \"sys\":" a[6] ", \"idle\":" a[13]}');
+        # include cpu load, note mpstat responds to its own locale (probably www user), which makes
+        # the time output different than a normal user - will need to verify across platforms
+        cpu_load=$(mpstat | tail -1 | awk '{split($0,a," "); print "\"usr\":" a[3] ", \"sys\":" a[5] ", \"idle\":" a[12]}');
         sensorOutput="$sensorOutput, \"cpu-load\": { $cpu_load }, \"cpu-load-unit\": \"%\"";
 
         # include cpu temperature
