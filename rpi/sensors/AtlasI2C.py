@@ -145,7 +145,8 @@ class AtlasI2C:
 
         if is_valid:
             char_list = self.handle_raspi_glitch(response[1:])
-            result = "\"" + self._module + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": " + ezoUnits[self._module]
+            #result = "\"" + self._module + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": \"" + ezoUnits[self._module] + "\""
+            result = "\"" + self._module + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": \"" + "ezoUnits[self._module]" + "\""
             #result = "Success: " +  str(''.join(char_list))
         else:
             result = "Error " + self.get_device_info() + ": " + error_code
