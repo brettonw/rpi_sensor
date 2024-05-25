@@ -4,3 +4,5 @@
 
 # i2c output controls
 # gpio outputs
+
+- controls should have an idea of their last set state and should recover that state at startup 

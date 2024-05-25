@@ -1,4 +1,4 @@
-# /usr/bin/env bash
+#! /usr/bin/env bash
 
 # define a logging function
 echoerr() { echo "$@" 1>&2; }
@@ -8,6 +8,7 @@ sensorDir="/var/www/html/sensor";
 rawHistoryFile="$sensorDir/history.raw";
 jsonHistoryFile="$sensorDir/history.json";
 jsonNowFile="$sensorDir/now.json";
+controlsFile="$sensorDir/controls.json";
 
 # setup the script start time and the counter
 startTimestamp=$(date +%s%3N);
@@ -22,7 +23,26 @@ do
     timestamp=$(date +%s%3N);
     sensorRead=$(/home/brettonw/bin/sensor.py | sed -e "s/^ *$//");
     if [ ! -z "$sensorRead" ]; then
-        sensorOutput="{ \"timestamp\": $timestamp, $sensorRead }";
+        sensorOutput="{ \"timestamp\": $timestamp, $sensorRead";
+
+        # accumulate controls if there are any
+        if [ -f $controlsFile ]; then
+          controls=$(<$controlsFile);
+          sensorOutput="$sensorOutput, \"controls\": $controls";
+        fi
+
+        # include cpu temperature
+        cpu_temperature=$(</sys/class/thermal/thermal_zone0/temp)
+        sensorOutput="$sensorOutput, \"cpu-temperature\": $((cpu_temperature/1000)), \"cpu-temperature-unit\": \"C\"";
+
+        # include memory
+        memory=$(free -b | tail -2 | tr '\n' ' ' | awk '{split($0,a," "); print "\"mem-total\":" a[2] ", \"mem-used\":" a[3] ", \"mem-free\":" a[4] ", \"swap-total\":" a[9] ", \"swap-used\":" a[10] ", \"swap-free\":" a[11]}');
+        sensorOutput="$sensorOutput, \"memory\": \{ $memory \}, \"memory-unit\": \"kB\"";
+
+        # close the bag
+        sensorOutput="$sensorOutput }";
+
+        # emit the results
         echo "    , $sensorOutput" >> $rawHistoryFile;
         echo "$sensorOutput" > $jsonNowFile;
 
@@ -30,7 +50,7 @@ do
         counter=$(( counter + 1 ));
         modulo=$(( counter % 6));
         if [ $modulo -eq 0 ]; then
-            # limit the log output to 10G, about 1 day at every 10 seconds
+            # limit the log output to 10K, about 1 day at every 10 seconds
             tail --lines 10K $rawHistoryFile > "$rawHistoryFile.tmp";
             mv "$rawHistoryFile.tmp" $rawHistoryFile;
 
@@ -53,5 +73,3 @@ do
       echoerr "PROBLEM: not sleeping ($delta ms)";
     fi;
 done
-
-
