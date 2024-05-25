@@ -132,7 +132,7 @@ class AtlasI2C:
         reads a specified number of bytes from I2C, then parses and displays the result
         '''
 
-        ezoUnits = {
+        moduleUnits = {
             "pH": "pH",
             "EC": "mS",
             "RTD": "C"
@@ -146,7 +146,7 @@ class AtlasI2C:
         if is_valid:
             char_list = self.handle_raspi_glitch(response[1:])
             #result = "\"" + self._module + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": \"" + ezoUnits[self._module] + "\""
-            result = "\"" + self._module + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": \"" + ezoUnits.get(self._module) + "\""
+            result = "\"" + self._module.lower() + "\":" + str(''.join(char_list)) + ", \"" + self._module + "-unit\": \"" + moduleUnits.get(self._module, "bogus") + "\""
             #result = "Success: " +  str(''.join(char_list))
         else:
             result = "Error " + self.get_device_info() + ": " + error_code
