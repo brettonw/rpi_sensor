@@ -58,7 +58,7 @@ echo "Configured for sensor ($existing).";
 serviceName="get-sensor.service";
 echo "Installing service \"$serviceName\"...";
 sudo systemctl stop "$serviceName";
-cp "$executingDir/get-sensor.bash" "$binPath/";
+ln -s "$executingDir/get-sensor.bash" "$binPath/get-sensor.bash";
 sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
 sudo systemctl enable "$serviceName";
 sudo systemctl start "$serviceName";
