@@ -64,5 +64,8 @@ sudo systemctl enable "$serviceName";
 sudo systemctl start "$serviceName";
 echo "Done.";
 
+# install the sysstat library needed by the sensor
+sudo apt install -y sysstat
+
 # reboot the raspberry pi
 sudo reboot now;

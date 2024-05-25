@@ -21,12 +21,16 @@ do
     timestamp=$(date +%s%3N);
     sensorRead=$(/home/brettonw/bin/sensor.py | sed -e "s/^ *$//");
     if [ ! -z "$sensorRead" ]; then
-        sensorOutput="{ \"timestamp\": $timestamp, $sensorRead";
+        # start with the time stamp
+        sensorOutput="{ \"timestamp\": $timestamp";
+
+        # include the sensor read
+        sensorOutput="$sensorOutput, $sensorRead";
 
         # accumulate controls if there are any
         if [ -f $controlsFile ]; then
           controls=$(<$controlsFile);
-          sensorOutput="$sensorOutput, \"controls\": $controls";
+          sensorOutput="$sensorOutput, \"control\": $controls";
         fi
 
         # include cpu load
