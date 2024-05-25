@@ -39,8 +39,12 @@ def main():
     for dev in device_list:
         dev.write("R")
     time.sleep(device.long_timeout)
+    output = ""
+    comma = ""
     for dev in device_list:
-        print(dev.read())
+        output += dev.read() + comma
+        comma = ","
+    print(output)
 
 if __name__ == '__main__':
     main()
