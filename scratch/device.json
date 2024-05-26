@@ -1,0 +1,116 @@
+{
+  "last_update": "20240525 22:29:31.755",
+  "name": "Aquarium Controller",
+  "description": "An example device scheme with sensors and controls",
+  "entities": {
+    "outlet0":{
+      "alias": "pump",
+      "type": "state_based_control",
+      "driver": "switch",
+      "parameters": {
+        "pin": 11
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": false
+    },
+    "outlet1":{
+      "alias": "heater",
+      "driver": "switch",
+      "parameters": {
+        "pin": 13
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": false
+    },
+    "outlet2":{
+      "alias": "fan",
+      "driver": "switch",
+      "parameters": {
+        "pin": 15
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": false
+    },
+    "dac1a": {
+      "alias": "light-brightness",
+      "driver": "DFGP8403",
+      "parameters": {
+        "address": "0x5f",
+        "range": 10000,
+        "channel": 0
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 10000
+    },
+    "dac1b": {
+      "alias": "light-color",
+      "driver": "DFGP8403",
+      "parameters": {
+        "address": "0x5f",
+        "range": 10000,
+        "channel": 1
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 4000
+    },
+    "dac2a": {
+      "alias": "unused 0",
+      "driver": "DFGP8403",
+      "parameters": {
+        "address": "0x5f",
+        "range": 10000,
+        "channel": 0
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 0
+    },
+    "dac2b": {
+      "alias": "unused 1",
+      "driver": "DFGP8403",
+      "parameters": {
+        "address": "0x5f",
+        "range": 10000,
+        "channel":1
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 0
+    },
+    "pH": {
+      "driver": "ATLAS",
+      "parameters": {
+        "address": "0x63",
+        "unit": " "
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 8.123
+    },
+    "temperature": {
+      "driver": "ATLAS",
+      "parameters": {
+        "address": "0x66",
+        "unit": "C"
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 26.5
+    },
+    "conductivity": {
+      "driver": "ATLAS",
+      "parameters": {
+        "address": "0x64",
+        "unit": "uS"
+      },
+      "last_update": "20240525 22:29:31.755",
+      "last_change": "20240525 22:29:31.755",
+      "value": 53544
+    }
+  }
+}
