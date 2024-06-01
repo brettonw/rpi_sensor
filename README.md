@@ -42,11 +42,28 @@ A numeric-to-state adapter provides a way to map a numeric input to a state outp
 
 A state-to-numeric adapter is configured with a numeric value for each state and calls the target with it when set.
 
+A numeric-to-numeric adapter could be used to create a canonical or percentage-based interface to another numeric entity 
+
 ### Virtual Entities
 A virtual entity can provide some enhanced functionality inside a device by combining some other entites and exposing a simple sensor or control interface. An obvious example is a thermostat for a device that has a temperature sensor, a heater control, and a cooler control. The external control is a target temperature, and the configuration specifies the heater and cooler entity along with things like temperature tolerances. We expose a generic example called a PID for this purpose.
 
 ## Drivers
 Drivers connect an actual circuit device to the entity concept inside rpi_sensor. These may be the software that operates a specific I2C device, but also include install capabilities. Drivers are typically a pair, consisting of a bash script for installation and a python program for circuit interaction.
+
+---
+## update
+The device transits across all entites and calling update on each driver, passing the entity description as a parameter. The returned value is compared to the existing value, and the update time and change time are updated as appropriate.
+
+## get
+The device transits across all the entities and returns a JSON-formatted string with the name of each entity and its value.
+
+## set
+A value is passed to the set method, and subsequently to the driver by the entity.
+
+## configuration
+A numeric type will always have a range, a state type will always have a list of states (is this true even for pedantic types like "switch"), should we have an explicit binary type? set parameters will be validated against the range or states. States in the entity configuration are arrays of arrays - the first entry in each array being the canonical name of that state, with synonyms that will be recognized... Entities can be configured to report or no.
+
+---
 
 # ALMOST ALL OF THE BELOW IS COMPLETELY OUTDATED
 # rpi_sensor

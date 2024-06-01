@@ -1,115 +1,107 @@
 {
-  "last_update": "20240525 22:29:31.755",
-  "name": "Aquarium Controller",
+  "device": "Aquarium Controller",
   "description": "An example device scheme with sensors and controls",
   "entities": {
     "outlet0":{
       "alias": "pump",
-      "type": "state_based_control",
       "driver": "switch",
-      "parameters": {
-        "pin": 11
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
-      "value": false
+      "states": [["on", "yes", "true", true], ["off", "no", "false", false]],
+      "pin": 11,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
+      "value": "on"
     },
     "outlet1":{
       "alias": "heater",
       "driver": "switch",
-      "parameters": {
-        "pin": 13
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
-      "value": false
+      "states": [["on", "yes", "true", true], ["off", "no", "false", false]],
+      "pin": 13,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
+      "value": "on"
     },
     "outlet2":{
       "alias": "fan",
       "driver": "switch",
-      "parameters": {
-        "pin": 15
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
-      "value": false
+      "states": [["on", "yes", "true", true], ["off", "no", "false", false]],
+      "pin": 15,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
+      "value": "on"
+    },
+    "unused-relay": {
+      "report": false,
+      "driver": "switch",
+      "states": [["on", "yes", "true", true], ["off", "no", "false", false]],
+      "pin": 16,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
+      "value": "on"
     },
     "dac1a": {
       "alias": "light-brightness",
       "driver": "DFGP8403",
-      "parameters": {
-        "address": "0x5f",
-        "range": 10000,
-        "channel": 0
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "range": [0, 10000],
+      "address": "0x5f",
+      "channel": 0,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 10000
     },
     "dac1b": {
       "alias": "light-color",
       "driver": "DFGP8403",
-      "parameters": {
-        "address": "0x5f",
-        "range": 10000,
-        "channel": 1
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "address": "0x5f",
+      "range": [0, 10000],
+      "channel": 1,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 4000
     },
     "dac2a": {
+      "report": false,
       "alias": "unused 0",
       "driver": "DFGP8403",
-      "parameters": {
-        "address": "0x5f",
-        "range": 10000,
-        "channel": 0
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "address": "0x5f",
+      "range": [0, 10000],
+      "channel": 0,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 0
     },
     "dac2b": {
+      "report": false,
       "alias": "unused 1",
       "driver": "DFGP8403",
-      "parameters": {
-        "address": "0x5f",
-        "range": 10000,
-        "channel":1
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "address": "0x5f",
+      "range": [0, 10000],
+      "channel":1,
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 0
     },
     "pH": {
-      "driver": "ATLAS",
-      "parameters": {
-        "address": "0x63",
-        "unit": " "
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "driver": "AtlasEZO",
+      "range": [0, 14],
+      "ezo": "ph",
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 8.123
     },
     "temperature": {
-      "driver": "ATLAS",
-      "parameters": {
-        "address": "0x66",
-        "unit": "C"
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "driver": "AtlasEZO",
+      "range": [0, 100],
+      "ezo": "temperature",
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 26.5
     },
     "conductivity": {
-      "driver": "ATLAS",
-      "parameters": {
-        "address": "0x64",
-        "unit": "uS"
-      },
-      "last_update": "20240525 22:29:31.755",
-      "last_change": "20240525 22:29:31.755",
+      "driver": "AtlasEZO",
+      "range": [5, 100000],
+      "ezo": "conductivity",
+      "last_update": 1716774506433,
+      "last_change": 1716774506433,
       "value": 53544
     }
   }
