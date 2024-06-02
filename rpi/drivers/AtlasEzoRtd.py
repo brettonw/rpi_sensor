@@ -4,6 +4,7 @@
 
 from AtlasEzo import AtlasEzo
 from time import time
+from typing import Union
 
 class AtlasEzoRtd(AtlasEzo):
     """
@@ -41,7 +42,7 @@ class AtlasEzoRtd(AtlasEzo):
     # READ FUNCTIONS
 
     @property
-    def value(self) -> float | int:
+    def value(self) -> Union[float, int]:
         return self.temperature
 
     @property
@@ -66,7 +67,7 @@ class AtlasEzoRtd(AtlasEzo):
             return AtlasEzo.CALIBRATION_ERROR
 
     def calibrate(self, target_value: float = 100.0) -> bool:
-        self.wait_for_stable_value(0.1)
+        self.wait_for_stable_value()
         return self.query(f"CAL,{target_value:.3f}") == AtlasEzo.OK
 
     def _get_units(self):

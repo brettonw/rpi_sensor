@@ -11,6 +11,7 @@
 #        commands - might be useful to expose calibration later... as separate devices.
 
 from abc import ABC, abstractmethod
+from typing import Union
 import io
 import fcntl
 from time import time, sleep
@@ -52,7 +53,7 @@ class AtlasEzo(ABC):
         return self._name
 
     @property
-    def value(self) -> float | int:
+    def value(self) -> Union[float, int]:
         return 0
 
     @property
@@ -70,7 +71,7 @@ class AtlasEzo(ABC):
         })
 
     @staticmethod
-    def _assert_equals(left, right):
+    def _assert_equals(left, right) -> None:
         if left != right:
             print(f"Assertion Failure: ({left}) != ({right})");
             raise AssertionError

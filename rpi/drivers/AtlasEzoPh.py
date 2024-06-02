@@ -3,6 +3,7 @@
 # EZO pH Docs: https://files.atlas-scientific.com/pH_EZO_Datasheet.pdf
 
 from AtlasEzo import AtlasEzo
+from typing import Union
 
 class AtlasEzoPh(AtlasEzo):
     """
@@ -28,7 +29,7 @@ class AtlasEzoPh(AtlasEzo):
     # READ FUNCTIONS
 
     @property
-    def value(self) -> float | int:
+    def value(self) -> Union[float, int]:
         return self.ph
 
     @property
@@ -53,7 +54,7 @@ class AtlasEzoPh(AtlasEzo):
             return AtlasEzo.CALIBRATION_ERROR
 
     def _calibrate(self, target: str, target_value:float) -> bool:
-        self.wait_for_stable_value(0.1)
+        self.wait_for_stable_value()
         return self.query(f"CAL,{target},{target_value:.3f}") == AtlasEzo.OK
 
     def calibrate_low(self, target_value: float = 4.0) -> bool:

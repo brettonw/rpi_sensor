@@ -34,6 +34,7 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
     # CALIBRATION FUNCTIONS
 
     def calibrate_low(self, unused: float = 0) -> bool:
+        self._rtd.wait_for_stable_value()
         target_value = interpolate([
             XYPair( 5.0, 4.00),
             XYPair(10.0, 4.00),
@@ -50,6 +51,7 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
 
     def calibrate_mid(self, unused: float = 0.0) -> bool:
         # use the temperature to compute a target from the table on the side of the bottle
+        self._rtd.wait_for_stable_value()
         target_value = interpolate([
             XYPair( 5.0, 7.09),
             XYPair(10.0, 7.06),
@@ -65,6 +67,7 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
         return super().calibrate_mid(target_value)
 
     def calibrate_high(self, unused: float = 0.0) -> bool:
+        self._rtd.wait_for_stable_value()
         target_value = interpolate([
             XYPair( 5.0, 10.25),
             XYPair(10.0, 10.18),
@@ -83,22 +86,16 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
         print("Place the pH and RTD probes in the mid (pH 7.00) solution")
         print("Press (ENTER) to continue")
         input()
-        self._rtd.wait_for_stable_value()
-        self.wait_for_stable_value()
         self.calibrate_mid()
 
         print("Place the pH and RTD probes in the low (pH 4.00) solution")
         print("Press (ENTER) to continue")
         input()
-        self._rtd.wait_for_stable_value()
-        self.wait_for_stable_value()
         self.calibrate_low()
 
         print("Place the pH and RTD probes in the high (pH 10.00) solution")
         print("Press (ENTER) to continue")
         input()
-        self._rtd.wait_for_stable_value()
-        self.wait_for_stable_value()
         self.calibrate_high()
 
         print("Calibration complete.")

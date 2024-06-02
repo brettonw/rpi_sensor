@@ -3,6 +3,7 @@
 # EZO EC Docs: # https://files.atlas-scientific.com/EC_EZO_Datasheet.pdf
 
 from AtlasEzo import AtlasEzo
+from typing import Union
 
 class AtlasEzoEc(AtlasEzo):
     """
@@ -37,7 +38,7 @@ class AtlasEzoEc(AtlasEzo):
     # READ FUNCTIONS
 
     @property
-    def value(self) -> float | int:
+    def value(self) -> Union[float, int]:
         return self.conductivity
 
     @property

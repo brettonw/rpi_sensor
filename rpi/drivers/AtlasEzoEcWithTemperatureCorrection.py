@@ -32,6 +32,7 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
     # CALIBRATION FUNCTIONS
 
     def calibrate_low(self, unused: int = 0) -> bool:
+        self._rtd.wait_for_stable_value()
         target_value = interpolate([
             XYPair( 5.0,  8220),
             XYPair(10.0,  9330),
@@ -47,6 +48,7 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
         return super().calibrate_low(int(target_value))
 
     def calibrate_high(self, unused: int = 0) -> bool:
+        self._rtd.wait_for_stable_value()
         target_value = interpolate([
             XYPair( 5.0,  53500),
             XYPair(10.0,  59600),
@@ -65,21 +67,16 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
         print("Remove the EC probe and shake it off")
         print("Press (ENTER) to continue")
         input()
-        self.wait_for_stable_value()
         self.calibrate_dry()
 
         print("Place the EC and RTD probes in the low solution")
         print("Press (ENTER) to continue")
         input()
-        self._rtd.wait_for_stable_value()
-        self.wait_for_stable_value()
         self.calibrate_low()
 
         print("Place the EC and RTD probes in the high solution")
         print("Press (ENTER) to continue")
         input()
-        self._rtd.wait_for_stable_value()
-        self.wait_for_stable_value()
         self.calibrate_high()
 
         print("Calibration complete.")
