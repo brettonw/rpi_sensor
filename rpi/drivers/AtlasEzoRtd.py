@@ -30,7 +30,7 @@ class AtlasEzoRtd(AtlasEzo):
 
     def soft_reset(self) -> None:
         # set the temperature scale to degrees C
-        AtlasEzo._assert_equals (self.query("S,c"), AtlasEzo.OK)
+        self.set_units("c")
 
         # turn off the data logger
         AtlasEzo._assert_equals(self.query("D,0"), AtlasEzo.OK)
