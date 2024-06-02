@@ -165,8 +165,8 @@ class AtlasEzo(ABC):
         for _ in itertools.repeat(None, n):
             sample = self.query_float("R", 0.0)
             samples.append(sample)
-            sd = f"{stdev(samples):.03f}" if len(samples) > 1 else "n/a"
-            print(f"sample: {sample:.03f}, stdev: {sd}, samples: {len(samples)}")
+            sd = f"{stdev(samples): 3.03f}" if len(samples) > 1 else "n/a"
+            print(f"sample: {sample: 5.03f}, stdev: {sd}, samples: {len(samples)}")
 
         print(f"stdev: {stdev(samples):.03f}, samples: {n}")
 
@@ -185,8 +185,9 @@ class AtlasEzo(ABC):
             nonlocal samples
             samples.append(sample)
             samples = samples[-n_max:]
-            sd = stdev(samples) if len(samples) > 1 else 0
-            print(f"sample: {sample:.03f}, stdev: {sd:.03f}, samples: {len(samples)}, tolerance: {tolerance:.03f}")
+            sd = stdev(samples) if len(samples) > 1 else tolerance + 1
+            sds = f"{sd:.03f}" if len(samples) > 1 else "n/a"
+            print(f"sample: {sample: 5.03f}, stdev: {sds}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
             return sd
 
         sample = collect_sample()
