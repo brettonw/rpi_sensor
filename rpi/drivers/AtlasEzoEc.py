@@ -37,9 +37,6 @@ class AtlasEzoEc(AtlasEzo):
     def conductivity(self) -> int:
         return self.query_int("R", AtlasEzoEc.EC_ERROR)
 
-    def wait_for_stable_value(self):
-        self._wait_for_stable_value(35, 30, 15)
-
     # CALIBRATION FUNCTIONS
     # NOTE two-point calibration should proceed as dry, n, three-point calibration should proceed as
     # dry, low, high

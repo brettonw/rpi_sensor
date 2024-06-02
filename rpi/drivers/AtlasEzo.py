@@ -16,7 +16,7 @@ import io
 import fcntl
 from time import time, sleep
 import json
-from statistics import stdev
+from statistics import stdev, mean
 import itertools
 
 
@@ -170,11 +170,7 @@ class AtlasEzo(ABC):
 
         print(f"stdev: {stdev(samples):.03f}, samples: {n}")
 
-    @abstractmethod
-    def wait_for_stable_value(self):
-        pass
-
-    def _wait_for_stable_value(self, tolerance: float, n_max: int = 30, n_min: int = 10) -> None:
+    def wait_for_stable_value(self, tolerance: float = 0.01, n_max: int = 30, n_min: int = 15) -> None:
         # all ezo modules support "R" commands to just read a value. we simply want to read at one
         # second intervals until the variance in the last n samples drops below some standard
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
@@ -182,13 +178,18 @@ class AtlasEzo(ABC):
 
         def collect_sample() -> float:
             sample = self.query_float("R", 0.0)
-            nonlocal samples
+            nonlocal samples, n_max
             samples.append(sample)
             samples = samples[-n_max:]
-            sd = stdev(samples) if len(samples) > 1 else tolerance + 1
-            sds = f"{sd:.03f}" if len(samples) > 1 else "n/a"
-            print(f"sample: {sample: 5.03f}, stdev: {sds}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
-            return sd
+            if len(samples) > 1:
+                avg = mean(samples)
+                sd = stdev(samples)
+                error = sd / avg
+                print(f"sample: {sample: 5.03f}, error: {error:.03f}, mean: {avg:5.03f}, stdev: {sd:5.03f}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
+            else:
+                error = 1
+                print(f"sample: {sample: 5.03f}")
+            return error
 
         sample = collect_sample()
         while (len(samples) < n_min) or (sample > tolerance):
