@@ -61,6 +61,9 @@ class RpiSensorType:
     TEMPERATURE = "temperature"
     PRESSURE = "pressure"
     DISTANCE = "distance"
+    PH = "ph"
+    CONDUCTIVITY = "conductivity"
+    CPU_TEMPERATURE = "cpu-temperature"
 
 
 def setup_platform(
@@ -78,8 +81,14 @@ def setup_platform(
         entities_to_add.append(RpiSensor(config, record, RpiSensorType.PRESSURE, SensorDeviceClass.PRESSURE,UnitOfPressure.HPA))
     if RpiSensorType.TEMPERATURE in record:
         entities_to_add.append(RpiSensor(config, record, RpiSensorType.TEMPERATURE, SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS))
+    if RpiSensorType.CPU_TEMPERATURE in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.CPU_TEMPERATURE, SensorDeviceClass.TEMPERATURE, UnitOfTemperature.CELSIUS))
     if RpiSensorType.DISTANCE in record:
         entities_to_add.append(RpiSensor(config, record, RpiSensorType.DISTANCE, None, UnitOfLength.MILLIMETERS))
+    if RpiSensorType.CONDUCTIVITY in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.CONDUCTIVITY, None, record["conductivity-unit"]))
+    if RpiSensorType.PH in record:
+        entities_to_add.append(RpiSensor(config, record, RpiSensorType.PH, None, ""))
     if len(entities_to_add) > 0:
         add_entities(entities_to_add)
 
