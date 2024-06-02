@@ -189,9 +189,9 @@ class AtlasEzo(ABC):
             print(f"sample: {sample:.03f}, stdev: {sd:.03f}, samples: {len(samples)}, tolerance: {tolerance:.03f}")
             return sd
 
-        collect_sample()
-        while (len(samples) < n_min) or (collect_sample() > tolerance):
-            pass
+        sample = collect_sample()
+        while (len(samples) < n_min) or (sample > tolerance):
+            sample = collect_sample()
 
     @property
     @abstractmethod
