@@ -6,6 +6,7 @@ from AtlasEzo import AtlasEzo
 from time import time
 from typing import Union
 
+
 class AtlasEzoRtd(AtlasEzo):
     """
     The EZO RTD sensor is configured to return temperature in degrees C
@@ -26,7 +27,7 @@ class AtlasEzoRtd(AtlasEzo):
         response = self.query("S,?")
         self._units = response.split(',')[-1].upper()
         assert self._units in ["C", "F", "K"]
-        #print(f"Units: {self._units}")
+        # print(f"Units: {self._units}")
 
     def soft_reset(self) -> None:
         # set the temperature scale to degrees C
@@ -50,12 +51,12 @@ class AtlasEzoRtd(AtlasEzo):
     def wait_for_stable_value(self):
         self._wait_for_stable_value(0.005, 20)
 
-    def set_units(self, units:str):
+    def set_units(self, units: str):
         units = units.lower()
         if units in ["c", "f", "k"]:
             AtlasEzo._assert_equals(self.query(f"S,{units}"), AtlasEzo.OK)
             self._units = units.upper()
-        #print(f"Units: {self._units}")
+        # print(f"Units: {self._units}")
 
     # CALIBRATION FUNCTIONS
 
@@ -64,7 +65,7 @@ class AtlasEzoRtd(AtlasEzo):
         """
         :return: -1 = an error was encountered, 0 = not-calibrated, 1 = calibrated
         """
-        response = self.query("CAL,?", 0.3)
+        response = self.query("CAL,?")
         try:
             return int(response.split(',', 1)[1]) if response.startswith("?CAL,") else AtlasEzo.CALIBRATION_ERROR
         except ValueError:

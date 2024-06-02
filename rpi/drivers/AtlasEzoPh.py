@@ -5,6 +5,7 @@
 from AtlasEzo import AtlasEzo
 from typing import Union
 
+
 class AtlasEzoPh(AtlasEzo):
     """
     The EZO pH sensor is configured to return pH in the range 0..14
@@ -47,7 +48,7 @@ class AtlasEzoPh(AtlasEzo):
         except ValueError:
             return AtlasEzo.CALIBRATION_ERROR
 
-    def _calibrate(self, target: str, target_value:float) -> bool:
+    def _calibrate(self, target: str, target_value: float) -> bool:
         self.wait_for_stable_value()
         return self.query(f"CAL,{target},{target_value:.3f}") == AtlasEzo.OK
 

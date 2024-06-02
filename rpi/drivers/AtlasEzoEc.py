@@ -5,6 +5,7 @@
 from AtlasEzo import AtlasEzo
 from typing import Union
 
+
 class AtlasEzoEc(AtlasEzo):
     """
     The EZO EC sensor is configured to return conductivity and salinity on a seawater range using a
@@ -56,7 +57,7 @@ class AtlasEzoEc(AtlasEzo):
             return AtlasEzo.CALIBRATION_ERROR
 
     def _calibrate(self, target: str) -> bool:
-        self.wait_for_stable_value(40)
+        self.wait_for_stable_value()
         return self.query(f"CAL,{target}") == AtlasEzo.OK
 
     def calibrate_dry(self) -> bool:
@@ -70,6 +71,7 @@ class AtlasEzoEc(AtlasEzo):
 
     def calibrate_high(self, target_value: int = 80000) -> bool:
         return self._calibrate(f"high,{target_value}")
+
 
 def main():
     print("Start")

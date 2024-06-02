@@ -74,7 +74,7 @@ class AtlasEzo(ABC):
     @staticmethod
     def _assert_equals(left, right) -> None:
         if left != right:
-            print(f"Assertion Failure: ({left}) != ({right})");
+            print(f"Assertion Failure: ({left}) != ({right})")
             raise AssertionError
 
     def _write(self, cmd: str) -> None:
@@ -86,7 +86,7 @@ class AtlasEzo(ABC):
             sleep(1.0 - delta)
         self._last_write_time = time()
 
-        # appends the null character and sends the string over I2C
+        # appends the null character and sends the string over i2c
         cmd += "\00"
         self.file_write.write(cmd.encode('latin-1'))
 
@@ -96,9 +96,8 @@ class AtlasEzo(ABC):
         this function is called when there is a success, to format the response bytes - for
         functions that don't actually have a response value, we substitute "OK"
         """
-        # change MSB to 0 for all received characters except the first and get a list of characters
-        # NOTE: this is a glitch in the raspberry pi,we shouldn't have to do this
-        #print(f"response is ({response}), with length {len(response)}")
+        # per Atlas Scientific, a glitch in the raspberry pi requires us to change the MSB to 0 for
+        # all received characters
         valid_contents = (len(response) > 0) and (response[0] != 0)
         return "".join(list(map(lambda x: chr(x & ~0x80), list(response)))) if valid_contents else AtlasEzo.OK
 
@@ -121,15 +120,17 @@ class AtlasEzo(ABC):
         :param num_of_bytes: almost always empty
         :return: a string with the ezo module response
         """
+        # all commands require some amount of delay before the read-back, all ezo modules use 0.3 as
+        # the multiple, 0.3, 0.6, 0.9... to minimize traffic, we start with this
+        READ_DELAY = 0.3
+
         def listen() -> (bytes, int):
-            # all commands require some amount of delay before the readback, ezo modules use 0.3 as
-            # the multiple, so we just build that in here
-            sleep(0.3)
+            sleep(READ_DELAY)
             response = self.file_read.read(num_of_bytes)
             return response, int(response[0]) if (len(response) > 0) else 0
 
         response, response_code = listen()
-        while (response_code == 254):
+        while response_code == 254:
             response, response_code = listen()
 
         # if the response is valid, strip trailing nulls and convert to a string, otherwise embed
@@ -165,7 +166,6 @@ class AtlasEzo(ABC):
             sample = self.query_float("R", 0.0)
             samples.append(sample)
             print(f"sample: {sample:.3f}, stdev: {stdev(samples):.3f}, samples: {len(samples)}")
-            sleep(1)
         print(f"stdev: {stdev(samples):.3f}, samples: {n}")
 
     @abstractmethod
@@ -177,9 +177,10 @@ class AtlasEzo(ABC):
         # second intervals until the variance in the last n samples drops below some standard
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
         samples = []
+
         def collect_sample():
             sample = self.query_float("R", 0.0)
-            global samples
+            nonlocal samples
             samples.append(sample)
             samples = samples[-n_max:]
             sd = stdev(samples)

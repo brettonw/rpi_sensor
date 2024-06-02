@@ -81,6 +81,7 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
 
         print("Calibration complete.")
 
+
 def main():
     print("Start")
     device = AtlasEzoEcWithTemperatureCorrection()
