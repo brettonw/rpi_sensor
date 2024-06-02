@@ -73,7 +73,7 @@ class AtlasEzoRtd(AtlasEzo):
 
     def calibrate(self, target_value: float = 100.0) -> bool:
         self.wait_for_stable_value()
-        return self.query(f"CAL,{target_value:.3f}") == AtlasEzo.OK
+        return self.query(f"CAL,{target_value:.03f}") == AtlasEzo.OK
 
 
 def main():

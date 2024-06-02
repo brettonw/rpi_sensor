@@ -165,8 +165,10 @@ class AtlasEzo(ABC):
         for _ in itertools.repeat(None, n):
             sample = self.query_float("R", 0.0)
             samples.append(sample)
-            print(f"sample: {sample:.3f}, stdev: {stdev(samples):.3f}, samples: {len(samples)}")
-        print(f"stdev: {stdev(samples):.3f}, samples: {n}")
+            sd = f"{stdev(samples):.03f}" if len(samples) > 1 else "n/a"
+            print(f"sample: {sample:.03f}, stdev: {sd}, samples: {len(samples)}")
+
+        print(f"stdev: {stdev(samples):.03f}, samples: {n}")
 
     @abstractmethod
     def wait_for_stable_value(self):
@@ -178,13 +180,13 @@ class AtlasEzo(ABC):
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
         samples = []
 
-        def collect_sample():
+        def collect_sample() -> float:
             sample = self.query_float("R", 0.0)
             nonlocal samples
             samples.append(sample)
             samples = samples[-n_max:]
-            sd = stdev(samples)
-            print(f"sample: {sample:.3f}, stdev: {sd:.3f}, samples: {len(samples)}, tolerance: {tolerance:.3f}")
+            sd = stdev(samples) if len(samples) > 1 else 0
+            print(f"sample: {sample:.03f}, stdev: {sd:.03f}, samples: {len(samples)}, tolerance: {tolerance:.03f}")
             return sd
 
         collect_sample()
