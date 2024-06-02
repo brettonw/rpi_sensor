@@ -28,15 +28,6 @@ class AtlasEzoEc(AtlasEzo):
         AtlasEzo._assert_equals(self.query("O,TDS,0"), AtlasEzo.OK)
         AtlasEzo._assert_equals(self.query("O,SG,0"), AtlasEzo.OK)
 
-    def _get_command_timeout(self, command: str) -> float:
-        return {
-            "R": 0.6,
-            "RT": 0.9,
-            "CAL": 0.6
-        }.get(command, 0.3)
-
-    # READ FUNCTIONS
-
     @property
     def value(self) -> Union[float, int]:
         return self.conductivity
@@ -44,6 +35,9 @@ class AtlasEzoEc(AtlasEzo):
     @property
     def conductivity(self) -> int:
         return self.query_int("R", AtlasEzoEc.EC_ERROR)
+
+    def wait_for_stable_value(self):
+        self._wait_for_stable_value(20, 20, 10)
 
     # CALIBRATION FUNCTIONS
     # NOTE two-point calibration should proceed as dry, n, three-point calibration should proceed as
@@ -76,9 +70,6 @@ class AtlasEzoEc(AtlasEzo):
 
     def calibrate_high(self, target_value: int = 80000) -> bool:
         return self._calibrate(f"high,{target_value}")
-
-    def wait_for_stable_value(self):
-        self._wait_for_stable_value(20, 20)
 
 def main():
     print("Start")

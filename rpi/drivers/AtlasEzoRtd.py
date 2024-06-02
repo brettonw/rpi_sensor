@@ -23,8 +23,10 @@ class AtlasEzoRtd(AtlasEzo):
         self._last_read_value: float = AtlasEzoRtd.TEMPERATURE_ERROR
 
         # fetch the units directly from the device
-        self._get_units()
-
+        response = self.query("S,?")
+        self._units = response.split(',')[-1].upper()
+        assert self._units in ["C", "F", "K"]
+        #print(f"Units: {self._units}")
 
     def soft_reset(self) -> None:
         # set the temperature scale to degrees C
@@ -32,14 +34,6 @@ class AtlasEzoRtd(AtlasEzo):
 
         # turn off the data logger
         AtlasEzo._assert_equals(self.query("D,0"), AtlasEzo.OK)
-
-    def _get_command_timeout(self, command: str) -> float:
-        return {
-            "R": 0.6,
-            "CAL": 0.6
-        }.get(command, 0.3)
-
-    # READ FUNCTIONS
 
     @property
     def value(self) -> Union[float, int]:
@@ -52,6 +46,16 @@ class AtlasEzoRtd(AtlasEzo):
             self._last_read_value = self.query_float("R", AtlasEzoRtd.TEMPERATURE_ERROR)
             self._last_read_time = now
         return self._last_read_value
+
+    def wait_for_stable_value(self):
+        self._wait_for_stable_value(0.005, 20)
+
+    def set_units(self, units:str):
+        units = units.lower()
+        if units in ["c", "f", "k"]:
+            AtlasEzo._assert_equals(self.query(f"S,{units}"), AtlasEzo.OK)
+            self._units = units.upper()
+        #print(f"Units: {self._units}")
 
     # CALIBRATION FUNCTIONS
 
@@ -69,20 +73,6 @@ class AtlasEzoRtd(AtlasEzo):
     def calibrate(self, target_value: float = 100.0) -> bool:
         self.wait_for_stable_value()
         return self.query(f"CAL,{target_value:.3f}") == AtlasEzo.OK
-
-    def _get_units(self):
-        response = self.query("S,?")
-        self._units = response.split(',')[-1].upper()
-        #print(f"Units: {self._units}")
-
-    def set_units(self, units:str):
-        if units in ["c", "C", "f", "F", "k", "K"]:
-            AtlasEzo._assert_equals(self.query(f"S,{units.lower()}"), AtlasEzo.OK)
-            self._units = units.upper()
-        #print(f"Units: {self._units}")
-
-    def wait_for_stable_value(self):
-        self._wait_for_stable_value(0.005, 20)
 
 
 def main():

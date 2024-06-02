@@ -111,7 +111,6 @@ class AtlasEzo(ABC):
         """
         return f"{AtlasEzo.ERROR} ({error_code}) - " + {
             255: "no data to send",
-            254: "not ready",
             2: "syntax error",
             0: "no response"
         }.get(error_code, "UNKNOWN")
@@ -122,49 +121,38 @@ class AtlasEzo(ABC):
         :param num_of_bytes: almost always empty
         :return: a string with the ezo module response
         """
-        # do the read and extract the response code
-        response = self.file_read.read(num_of_bytes)
-        response_code = int(response[0]) if (len(response) > 0) else 0
-
-        # XXX this is an experiment
-        # if the response is "not ready"
-        while response_code == 254:
-            print("NOT READY - WAITING TO TRY AGAIN")
-            sleep(0.1)
+        def listen() -> (bytes, int):
+            # all commands require some amount of delay before the readback, ezo modules use 0.3 as
+            # the multiple, so we just build that in here
+            sleep(0.3)
             response = self.file_read.read(num_of_bytes)
-            response_code = int(response[0]) if (len(response) > 0) else 0
+            return response, int(response[0]) if (len(response) > 0) else 0
+
+        response, response_code = listen()
+        while (response_code == 254):
+            response, response_code = listen()
 
         # if the response is valid, strip trailing nulls and convert to a string, otherwise embed
         # the error in the response
         return AtlasEzo._join(response[1:].rstrip(bytes([0]))) if (response_code == 1) else AtlasEzo._get_error(response_code)
 
-    @abstractmethod
-    def _get_command_timeout(self, command: str) -> float:
+    def query(self, command: str) -> str:
         """
-        command timeouts are dependent on the module, so we expect this method to be overridden
-        """
-        pass
-
-    def query(self, command: str, timeout: float = 0.0) -> str:
-        """
-        write a command to the board, wait the correct timeout,
-        and read the response
+        write a command to the ezo device and read the response
         """
         self._write(command)
-        # add a little slop to the timeout
-        #sleep(timeout if (timeout > 0.0) else self._get_command_timeout(command.split(',')[0].upper()))
         return self._read()
 
-    def query_float(self, command: str, value_on_error: float, timeout: float = 0.0) -> float:
-        response = self.query(command, timeout)
+    def query_float(self, command: str, value_on_error: float) -> float:
+        response = self.query(command)
         try:
             return float(response)
         except ValueError:
             print(f"response (query_float): {response}")
             return value_on_error
 
-    def query_int(self, command: str, value_on_error: int, timeout: float = 0.0) -> int:
-        response = self.query(command, timeout)
+    def query_int(self, command: str, value_on_error: int) -> int:
+        response = self.query(command)
         try:
             return int(response)
         except ValueError:
@@ -189,23 +177,18 @@ class AtlasEzo(ABC):
         # second intervals until the variance in the last n samples drops below some standard
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
         samples = []
-        for _ in itertools.repeat(None, n):
+        def collect_sample():
             sample = self.query_float("R", 0.0)
-            samples.append(sample)
-            print(f"sample: {sample:.3f}")
-            sleep(1)
-        sd = stdev(samples)
-        print(f"stdev: {sd:.3f}, samples: {n}, tolerance: {tolerance:.3f}")
-
-        samples = []
-        should_continue = True
-        while should_continue:
-            # generate the sample, and keep only the last n_max samples
-            sample = self.query_float("R", 0.0)
+            global samples
             samples.append(sample)
             samples = samples[-n_max:]
+            sd = stdev(samples)
             print(f"sample: {sample:.3f}, stdev: {sd:.3f}, samples: {len(samples)}, tolerance: {tolerance:.3f}")
-            should_continue = (len(samples) < n_min) or (stdev(samples) > tolerance)
+            return sd
+
+        collect_sample()
+        while (len(samples) < n_min) or (collect_sample() > tolerance):
+            pass
 
     @property
     @abstractmethod

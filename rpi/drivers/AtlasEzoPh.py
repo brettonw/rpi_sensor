@@ -19,15 +19,6 @@ class AtlasEzoPh(AtlasEzo):
     def soft_reset(self) -> None:
         AtlasEzo._assert_equals(self.query("pHext,0"), AtlasEzo.OK)
 
-    def _get_command_timeout(self, command: str) -> float:
-        return {
-            "R": 0.9,
-            "RT": 0.9,
-            "CAL": 0.9
-        }.get(command, 0.3)
-
-    # READ FUNCTIONS
-
     @property
     def value(self) -> Union[float, int]:
         return self.ph
@@ -35,6 +26,9 @@ class AtlasEzoPh(AtlasEzo):
     @property
     def ph(self) -> float:
         return self.query_float("R", -1.0)
+
+    def wait_for_stable_value(self):
+        self._wait_for_stable_value(0.05, 20)
 
     # CALIBRATION FUNCTIONS
     # NOTE three point calibration should proceed as mid, low, high because the EZO pH module will
@@ -65,9 +59,6 @@ class AtlasEzoPh(AtlasEzo):
 
     def calibrate_high(self, target_value: float = 10.0) -> bool:
         return self._calibrate("high", target_value)
-
-    def wait_for_stable_value(self):
-        self._wait_for_stable_value(0.05, 20)
 
 
 def main():
