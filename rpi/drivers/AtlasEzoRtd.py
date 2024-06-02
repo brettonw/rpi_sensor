@@ -76,6 +76,9 @@ class AtlasEzoRtd(AtlasEzo):
             self._units = units.upper()
         #print(f"Units: {self._units}")
 
+    def wait_for_stable_value(self):
+        self._wait_for_stable_value(0.005, 20)
+
 
 def main():
     print("Start")

@@ -61,6 +61,9 @@ class AtlasEzoPh(AtlasEzo):
     def calibrate_high(self, target_value: float = 10.0) -> bool:
         return self._calibrate("high", target_value)
 
+    def wait_for_stable_value(self):
+        self._wait_for_stable_value(0.05, 20)
+
 
 def main():
     print("Start")

@@ -79,6 +79,29 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
         ], self.temperature)
         return self.calibrate_high(target_value)
 
+    def calibrate_three_point(self):
+        print("Place the pH and RTD probes in the mid (pH 7.00) solution")
+        print("Press (ENTER) to continue")
+        input()
+        self._rtd.wait_for_stable_value()
+        self.wait_for_stable_value()
+        self.calibrate_mid()
+
+        print("Place the pH and RTD probes in the low (pH 4.00) solution")
+        print("Press (ENTER) to continue")
+        input()
+        self._rtd.wait_for_stable_value()
+        self.wait_for_stable_value()
+        self.calibrate_low()
+
+        print("Place the pH and RTD probes in the high (pH 10.00) solution")
+        print("Press (ENTER) to continue")
+        input()
+        self._rtd.wait_for_stable_value()
+        self.wait_for_stable_value()
+        self.calibrate_high()
+
+        print("Calibration complete.")
 
 def main():
     print("Start")
