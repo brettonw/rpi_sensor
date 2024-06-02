@@ -170,7 +170,7 @@ class AtlasEzo(ABC):
 
         print(f"stdev: {stdev(samples):.03f}, samples: {n}")
 
-    def wait_for_stable_value(self, tolerance: float = 0.01, n_max: int = 30, n_min: int = 15) -> None:
+    def wait_for_stable_value(self, tolerance: float = 0.005, n_max: int = 30, n_min: int = 15) -> None:
         # all ezo modules support "R" commands to just read a value. we simply want to read at one
         # second intervals until the variance in the last n samples drops below some standard
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
@@ -185,7 +185,7 @@ class AtlasEzo(ABC):
                 avg = mean(samples)
                 sd = stdev(samples)
                 error = sd / avg
-                print(f"sample: {sample: 5.03f}, error: {error:.03f}, mean: {avg:5.03f}, stdev: {sd:5.03f}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
+                print(f"sample: {sample: 5.03f}, error: {error:.05f}, mean: {avg:5.03f}, stdev: {sd:5.03f}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
             else:
                 error = 1
                 print(f"sample: {sample: 5.03f}")
