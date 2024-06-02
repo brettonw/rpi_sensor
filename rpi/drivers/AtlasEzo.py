@@ -53,8 +53,9 @@ class AtlasEzo(ABC):
         return self._name
 
     @property
+    @abstractmethod
     def value(self) -> Union[float, int]:
-        return 0
+        pass
 
     @property
     def units(self) -> str:
@@ -76,15 +77,16 @@ class AtlasEzo(ABC):
             print(f"Assertion Failure: ({left}) != ({right})");
             raise AssertionError
 
-    def write(self, cmd: str) -> None:
-        """
-        appends the null character and sends the string over I2C
-        """
+    def _write(self, cmd: str) -> None:
+        # we gate requests to the device to one per second, so compute how long it's been since the
+        # last request and sleep to make it so
         now = time()
         delta = now - self._last_write_time
         if delta < 1.0:
             sleep(1.0 - delta)
         self._last_write_time = time()
+
+        # appends the null character and sends the string over I2C
         cmd += "\00"
         self.file_write.write(cmd.encode('latin-1'))
 
@@ -114,18 +116,26 @@ class AtlasEzo(ABC):
             0: "no response"
         }.get(error_code, "UNKNOWN")
 
-    def read(self, num_of_bytes: int = 31) -> str:
+    def _read(self, num_of_bytes: int = 31) -> str:
         """
         read the result of a command issued to the module
         :param num_of_bytes: almost always empty
         :return: a string with the ezo module response
         """
-        # trim all trailing zeroes
+        # do the read and extract the response code
         response = self.file_read.read(num_of_bytes)
-        while response[0] == 254:
+        response_code = int(response[0]) if (len(response) > 0) else 0
+
+        # XXX this is an experiment
+        # if the response is "not ready"
+        while response_code == 254:
+            print("NOT READY - WAITING TO TRY AGAIN")
             sleep(0.1)
             response = self.file_read.read(num_of_bytes)
-        response_code = int(response[0]) if (len(response) > 0) else 0
+            response_code = int(response[0]) if (len(response) > 0) else 0
+
+        # if the response is valid, strip trailing nulls and convert to a string, otherwise embed
+        # the error in the response
         return AtlasEzo._join(response[1:].rstrip(bytes([0]))) if (response_code == 1) else AtlasEzo._get_error(response_code)
 
     @abstractmethod
@@ -140,10 +150,10 @@ class AtlasEzo(ABC):
         write a command to the board, wait the correct timeout,
         and read the response
         """
-        self.write(command)
+        self._write(command)
         # add a little slop to the timeout
-        sleep(timeout if (timeout > 0.0) else self._get_command_timeout(command.split(',')[0].upper()))
-        return self.read()
+        #sleep(timeout if (timeout > 0.0) else self._get_command_timeout(command.split(',')[0].upper()))
+        return self._read()
 
     def query_float(self, command: str, value_on_error: float, timeout: float = 0.0) -> float:
         response = self.query(command, timeout)
@@ -166,7 +176,7 @@ class AtlasEzo(ABC):
         for _ in itertools.repeat(None, n):
             sample = self.query_float("R", 0.0)
             samples.append(sample)
-            print(f"sample: {sample:.3f}")
+            print(f"sample: {sample:.3f}, stdev: {stdev(samples):.3f}, samples: {len(samples)}")
             sleep(1)
         print(f"stdev: {stdev(samples):.3f}, samples: {n}")
 
@@ -174,7 +184,7 @@ class AtlasEzo(ABC):
     def wait_for_stable_value(self):
         pass
 
-    def _wait_for_stable_value(self, tolerance: float, n: int = 30) -> None:
+    def _wait_for_stable_value(self, tolerance: float, n_max: int = 30, n_min: int = 10) -> None:
         # all ezo modules support "R" commands to just read a value. we simply want to read at one
         # second intervals until the variance in the last n samples drops below some standard
         # the actual intervals will be 1 second plus the query time, so probably closer to 2 seconds
@@ -186,13 +196,16 @@ class AtlasEzo(ABC):
             sleep(1)
         sd = stdev(samples)
         print(f"stdev: {sd:.3f}, samples: {n}, tolerance: {tolerance:.3f}")
-        while sd > tolerance:
+
+        samples = []
+        should_continue = True
+        while should_continue:
+            # generate the sample, and keep only the last n_max samples
             sample = self.query_float("R", 0.0)
             samples.append(sample)
-            samples = samples[-n:]
-            sd = stdev(samples)
-            print(f"sample: {sample:.3f}, stdev: {sd:.3f}, tolerance: {tolerance:.3f}")
-            sleep(1)
+            samples = samples[-n_max:]
+            print(f"sample: {sample:.3f}, stdev: {sd:.3f}, samples: {len(samples)}, tolerance: {tolerance:.3f}")
+            should_continue = (len(samples) < n_min) or (stdev(samples) > tolerance)
 
     @property
     @abstractmethod

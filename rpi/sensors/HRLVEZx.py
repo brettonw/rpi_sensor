@@ -23,7 +23,7 @@ def measure():
     while time() < endTime:
         bytesToRead = ser.inWaiting()
         if bytesToRead > 0:
-            ser.read(bytesToRead)
+            ser._read(bytesToRead)
         else:
             break
 
@@ -35,7 +35,7 @@ def measure():
     while time() < endTime:
         bytesToRead = ser.inWaiting()
         if bytesToRead >= guaranteedRead:
-            readBytes = ser.read(bytesToRead)
+            readBytes = ser._read(bytesToRead)
             rIndex = readBytes.find (b'R')
             fullReadCount = int ((len (readBytes) - rIndex) / fullReadSize) - 1
             readIndex = rIndex + (fullReadCount * fullReadSize) + 1
@@ -56,5 +56,3 @@ while (len(sampleList) < minSamples):
     if (sample >= minValue):
         sampleList.append(sample)
 print("\"distance\": {:5.3f}, \"distance-unit\": \"mm\", \"distance-stdev\": {:5.3f}".format(mean (sampleList), stdev (sampleList)))
-
-

@@ -101,7 +101,7 @@ class RpiSensor (SensorEntity):
                 url = f"http://{host}/sensor/now.json"
                 req = request.Request(url)
                 with request.urlopen(req) as response:
-                    result = json.loads(response.read().decode())
+                    result = json.loads(response._read().decode())
         except URLError as error:
             _LOGGER.error(f"Unable to retrieve data from Sensor host ({host}): {error.reason}")
         return result
