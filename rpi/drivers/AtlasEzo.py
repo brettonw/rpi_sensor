@@ -11,7 +11,6 @@
 #        commands - might be useful to expose calibration later... as separate devices.
 
 from abc import ABC, abstractmethod
-from typing import Union
 import io
 import fcntl
 from time import time, sleep
@@ -54,7 +53,7 @@ class AtlasEzo(ABC):
 
     @property
     @abstractmethod
-    def value(self) -> Union[float, int]:
+    def value(self) -> float:
         pass
 
     @property
@@ -150,14 +149,6 @@ class AtlasEzo(ABC):
             return float(response)
         except ValueError:
             print(f"response (query_float): {response}")
-            return value_on_error
-
-    def query_int(self, command: str, value_on_error: int) -> int:
-        response = self.query(command)
-        try:
-            return int(float(response))
-        except ValueError:
-            print(f"response (query_int): {response}")
             return value_on_error
 
     def report_stable_value(self, n: int = 30):

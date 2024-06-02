@@ -3,7 +3,6 @@
 # EZO pH Docs: https://files.atlas-scientific.com/pH_EZO_Datasheet.pdf
 
 from AtlasEzo import AtlasEzo
-from typing import Union
 
 
 class AtlasEzoPh(AtlasEzo):
@@ -21,7 +20,7 @@ class AtlasEzoPh(AtlasEzo):
         AtlasEzo._assert_equals(self.query("pHext,0"), AtlasEzo.OK)
 
     @property
-    def value(self) -> Union[float, int]:
+    def value(self) -> float:
         return self.ph
 
     @property

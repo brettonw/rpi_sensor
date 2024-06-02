@@ -3,7 +3,6 @@
 # EZO EC Docs: # https://files.atlas-scientific.com/EC_EZO_Datasheet.pdf
 
 from AtlasEzo import AtlasEzo
-from typing import Union
 
 
 class AtlasEzoEc(AtlasEzo):
@@ -13,7 +12,7 @@ class AtlasEzoEc(AtlasEzo):
     """
 
     # we use -999.0 as the error value
-    EC_ERROR = -999
+    EC_ERROR = -999.0
 
     def __init__(self, address: int = 0x64):
         super().__init__("conductivity", address, "μS")
@@ -30,12 +29,12 @@ class AtlasEzoEc(AtlasEzo):
         AtlasEzo._assert_equals(self.query("O,SG,0"), AtlasEzo.OK)
 
     @property
-    def value(self) -> Union[float, int]:
+    def value(self) -> float:
         return self.conductivity
 
     @property
-    def conductivity(self) -> int:
-        return self.query_int("R", AtlasEzoEc.EC_ERROR)
+    def conductivity(self) -> float:
+        return self.query_float("R", AtlasEzoEc.EC_ERROR)
 
     # CALIBRATION FUNCTIONS
     # NOTE two-point calibration should proceed as dry, n, three-point calibration should proceed as

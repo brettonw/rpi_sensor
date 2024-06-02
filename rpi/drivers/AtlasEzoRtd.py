@@ -4,7 +4,6 @@
 
 from AtlasEzo import AtlasEzo
 from time import time
-from typing import Union
 
 
 class AtlasEzoRtd(AtlasEzo):
@@ -37,7 +36,7 @@ class AtlasEzoRtd(AtlasEzo):
         AtlasEzo._assert_equals(self.query("D,0"), AtlasEzo.OK)
 
     @property
-    def value(self) -> Union[float, int]:
+    def value(self) -> float:
         return self.temperature
 
     @property
