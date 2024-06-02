@@ -38,7 +38,7 @@ class AtlasEzoEc(AtlasEzo):
         return self.query_int("R", AtlasEzoEc.EC_ERROR)
 
     def wait_for_stable_value(self):
-        self._wait_for_stable_value(20, 20, 10)
+        self._wait_for_stable_value(25, 30, 15)
 
     # CALIBRATION FUNCTIONS
     # NOTE two-point calibration should proceed as dry, n, three-point calibration should proceed as

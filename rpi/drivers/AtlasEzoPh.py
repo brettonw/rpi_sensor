@@ -29,7 +29,7 @@ class AtlasEzoPh(AtlasEzo):
         return self.query_float("R", -1.0)
 
     def wait_for_stable_value(self):
-        self._wait_for_stable_value(0.05, 20)
+        self._wait_for_stable_value(0.05, 30, 15)
 
     # CALIBRATION FUNCTIONS
     # NOTE three point calibration should proceed as mid, low, high because the EZO pH module will

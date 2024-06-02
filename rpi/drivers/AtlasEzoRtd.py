@@ -49,7 +49,7 @@ class AtlasEzoRtd(AtlasEzo):
         return self._last_read_value
 
     def wait_for_stable_value(self):
-        self._wait_for_stable_value(0.005, 20)
+        self._wait_for_stable_value(0.005, 30, 15)
 
     def set_units(self, units: str):
         units = units.lower()
