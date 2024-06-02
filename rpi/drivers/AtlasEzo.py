@@ -51,10 +51,9 @@ class AtlasEzo(ABC):
     def name(self) -> str:
         return self._name
 
-    @abstractmethod
     @property
-    def value(self):
-        pass
+    def value(self) -> float | int:
+        return 0
 
     @property
     def units(self) -> str:
