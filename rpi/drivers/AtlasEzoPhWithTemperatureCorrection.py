@@ -80,7 +80,7 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
             XYPair(45.0,  9.85),
             XYPair(50.0,  9.82)
         ], self.temperature)
-        return self.calibrate_high(target_value)
+        return super().calibrate_high(target_value)
 
     def calibrate_three_point(self):
         print("Place the pH and RTD probes in the mid (pH 7.00) solution")
