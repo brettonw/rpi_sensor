@@ -27,7 +27,6 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
 
     @property
     def conductivity(self) -> float:
-        print("RT")
         return self.query_float(f"RT,{self.temperature:.03f}", AtlasEzoEc.EC_ERROR)
 
     # CALIBRATION FUNCTIONS

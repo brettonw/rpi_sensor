@@ -29,7 +29,6 @@ class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):
 
     @property
     def ph(self) -> float:
-        print("RT")
         return self.query_float(f"RT,{self.temperature:.03f}", AtlasEzoPh.PH_ERROR)
 
     # CALIBRATION FUNCTIONS
