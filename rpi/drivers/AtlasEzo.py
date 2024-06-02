@@ -155,7 +155,7 @@ class AtlasEzo(ABC):
     def query_int(self, command: str, value_on_error: int) -> int:
         response = self.query(command)
         try:
-            return int(response)
+            return int(float(response))
         except ValueError:
             print(f"response (query_int): {response}")
             return value_on_error
