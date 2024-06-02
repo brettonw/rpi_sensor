@@ -41,6 +41,10 @@ class AtlasEzoRtd(AtlasEzo):
     # READ FUNCTIONS
 
     @property
+    def value(self):
+        return self.temperature
+
+    @property
     def temperature(self) -> float:
         now = time()
         if ((now - self._last_read_time) > AtlasEzoRtd.MAX_AGE) or (self._last_read_value == AtlasEzoRtd.TEMPERATURE_ERROR):

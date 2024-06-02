@@ -35,6 +35,11 @@ class AtlasEzoEc(AtlasEzo):
         }.get(command, 0.3)
 
     # READ FUNCTIONS
+
+    @property
+    def value(self):
+        return self.conductivity
+
     @property
     def conductivity(self) -> int:
         return self.query_int("R", AtlasEzoEc.EC_ERROR)

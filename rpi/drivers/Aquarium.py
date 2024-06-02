@@ -10,9 +10,9 @@ def main():
     ph = AtlasEzoPhWithTemperatureCorrection(rtd=rtd)
     ec = AtlasEzoEcWithTemperatureCorrection(rtd=rtd)
 
-    output = f"\"{rtd.name}\": {rtd.temperature}, \"{rtd.name}-unit\": \"{rtd.units}\""
-    output += f", \"{ph.name}\": {ph.ph}, \"{ph.name}-unit\": \"{ph.units}\""
-    output += f", \"{ec.name}\": {ec.conductivity}, \"{ec.name}-unit\": \"{ec.units}\""
+    output = f"\"{rtd.name}\": {rtd.value}, \"{rtd.name}-unit\": \"{rtd.units}\""
+    output += f", \"{ph.name}\": {ph.value}, \"{ph.name}-unit\": \"{ph.units}\""
+    output += f", \"{ec.name}\": {ec.value}, \"{ec.name}-unit\": \"{ec.units}\""
     print(output)
 
 

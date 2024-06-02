@@ -28,6 +28,10 @@ class AtlasEzoPh(AtlasEzo):
     # READ FUNCTIONS
 
     @property
+    def value(self):
+        return self.ph
+
+    @property
     def ph(self) -> float:
         return self.query_float("R", -1.0)
 
