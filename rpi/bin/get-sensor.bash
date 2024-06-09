@@ -40,7 +40,7 @@ do
 
         # include cpu temperature
         cpu_temperature=$(sed 's/.\{3\}$/.&/' <<< "$(</sys/class/thermal/thermal_zone0/temp)");
-        sensorOutput="$sensorOutput, \"cpu-temperature\": $cpu_temperature, \"cpu-temperature-unit\": \"C\"";
+        sensorOutput="$sensorOutput, \"cpu-temperature\": $cpu_temperature, \"cpu-temperature-unit\": \"°C\"";
 
         # include memory
         memory=$(free -b | tail -2 | tr '\n' ' ' | awk '{split($0,a," "); print "\"mem-total\":" a[2] ", \"mem-used\":" a[3] ", \"mem-free\":" a[4] ", \"swap-total\":" a[9] ", \"swap-used\":" a[10] ", \"swap-free\":" a[11]}');
