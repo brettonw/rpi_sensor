@@ -53,7 +53,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 class RpiSensorType:
     sensor_types = [
-        "relative_humidity",
+        "humidity",
         "temperature",
         "pressure",
         "distance",
@@ -70,7 +70,6 @@ class RpiSensorType:
     # home assistant might already have device classes for some types we use, but they don't know
     # the names we use as those, so this is a simple mapping for our wierd classes
     ha_device_classes = {
-        "relative_humidity": SensorDeviceClass.HUMIDITY,
         "cpu-temperature": SensorDeviceClass.TEMPERATURE,
         "memory": SensorDeviceClass.DATA_SIZE
     }
@@ -96,8 +95,8 @@ class RpiSensor (SensorEntity):
         _LOGGER.debug(f"Adding '{sensor_type}'" + ("" if sensor_subtype == "" else f"-{sensor_subtype}") + " sensor from host: ({config[CONF_HOST]})")
 
         name = config[CONF_NAME]
-        host = config[CONF_HOST]
-        self._host = host
+        self._host = config[CONF_HOST]
+        host = self._host.removesuffix(".local")
         self._attr_name = f"{name} {sensor_type}" + ("" if sensor_subtype == "" else f" {sensor_subtype}")
         self._attr_unique_id = (f"{host}_{name}_{sensor_type}" + ("" if sensor_subtype == "" else f"_{sensor_subtype}")).lower()
 
