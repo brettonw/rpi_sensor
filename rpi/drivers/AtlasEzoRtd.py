@@ -24,8 +24,8 @@ class AtlasEzoRtd(AtlasEzo):
 
         # fetch the units directly from the device
         response = self.query("S,?")
-        self._units = response.split(',')[-1].upper()
-        assert self._units in ["C", "F", "K"]
+        self._units = "°" + response.split(',')[-1].upper()
+        assert self._units in ["°C", "°F"]
         # print(f"Units: {self._units}")
 
     def soft_reset(self) -> None:

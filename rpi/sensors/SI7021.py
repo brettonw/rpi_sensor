@@ -18,6 +18,6 @@ temperatures = tuple (i["temperature"] for i in sampleList)
 relative_humidities = tuple (i["humidity"] for i in sampleList)
 
 # output the result
-print("\"temperature\": {:5.3f}, \"temperature-unit\": \"C\", \"temperature-stdev\": {:5.3f}, \"relative_humidity\": {:5.3f}, \"relative_humidity-unit\": \"%\", \"relative_humidity-stdev\": {:5.3f}"
+print("\"temperature\": {:5.3f}, \"temperature-unit\": \"°C\", \"temperature-stdev\": {:5.3f}, \"relative_humidity\": {:5.3f}, \"relative_humidity-unit\": \"%\", \"relative_humidity-stdev\": {:5.3f}"
       .format(mean (temperatures), stdev (temperatures), mean (relative_humidities), stdev(relative_humidities))
       )
