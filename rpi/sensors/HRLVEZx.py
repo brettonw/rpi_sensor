@@ -23,7 +23,7 @@ def measure():
     while time() < endTime:
         bytesToRead = ser.inWaiting()
         if bytesToRead > 0:
-            ser._read(bytesToRead)
+            ser.read(bytesToRead)
         else:
             break
 
@@ -35,7 +35,7 @@ def measure():
     while time() < endTime:
         bytesToRead = ser.inWaiting()
         if bytesToRead >= guaranteedRead:
-            readBytes = ser._read(bytesToRead)
+            readBytes = ser.read(bytesToRead)
             rIndex = readBytes.find (b'R')
             fullReadCount = int ((len (readBytes) - rIndex) / fullReadSize) - 1
             readIndex = rIndex + (fullReadCount * fullReadSize) + 1
