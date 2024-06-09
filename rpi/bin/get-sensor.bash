@@ -35,7 +35,7 @@ do
 
         # include cpu load, note mpstat responds to its own locale (probably www user), which makes
         # the time output different than a normal user - will need to verify across platforms
-        # NOTE - SET THE LOCALE ON THE RUNNING MACHINE TO... SOMETHING
+        # NOTE - SET THE LOCALE ON THE RUNNING MACHINE TO... C.UTF8 (not EN)
         cpu_load=$(mpstat | tail -1 | awk '{split($0,a," "); print "\"usr\":" a[3] ", \"sys\":" a[5] ", \"idle\":" a[12]}');
         sensorOutput="$sensorOutput, \"cpu-load\": { $cpu_load }, \"cpu-load-unit\": \"%\"";
 
