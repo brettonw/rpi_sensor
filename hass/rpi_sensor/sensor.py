@@ -99,7 +99,7 @@ class RpiSensor (SensorEntity):
         self._attr_unique_id = self._attr_name.replace(" ", " ").lower()
 
         unit_of_measurement = record[sensor_type + "-unit"]
-        self._attr_native_unit_of_measurement = unit_of_measurement if unit_of_measurement != "" else "no unit of measurement"
+        self._attr_native_unit_of_measurement = unit_of_measurement if unit_of_measurement != "" else " "
         self._attr_device_class = RpiSensorType.ha_device_classes.get(sensor_type, sensor_type)
         self._attr_state_class = SensorStateClass.MEASUREMENT
         self._sensor_type = sensor_type
