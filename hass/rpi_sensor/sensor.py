@@ -95,10 +95,8 @@ class RpiSensor (SensorEntity):
         _LOGGER.debug(f"Adding '{sensor_type}'" + ("" if sensor_subtype == "" else f"-{sensor_subtype}") + " sensor from host: ({config[CONF_HOST]})")
 
         name = config[CONF_NAME]
-        self._host = config[CONF_HOST]
-        host = self._host.removesuffix(".local")
         self._attr_name = f"{name} {sensor_type}" + ("" if sensor_subtype == "" else f" {sensor_subtype}")
-        self._attr_unique_id = (f"{host}_{name}_{sensor_type}" + ("" if sensor_subtype == "" else f"_{sensor_subtype}")).lower()
+        self._attr_unique_id = self._attr_name.replace(" ", " ").lower()
 
         self._attr_native_unit_of_measurement = record[sensor_type + "-unit"]
         self._attr_device_class = RpiSensorType.ha_device_classes.get(sensor_type, sensor_type)
@@ -106,6 +104,8 @@ class RpiSensor (SensorEntity):
         self._sensor_type = sensor_type
         self._sensor_subtype = sensor_subtype
         self._record = record
+
+        self._host = config[CONF_HOST]
         self.update()
 
     def update(self):
