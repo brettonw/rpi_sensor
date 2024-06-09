@@ -1,8 +1,6 @@
 #! /usr/bin/env python3
 
-#! /usr/bin/env python3
-
-from DFRobot_GP8403 import DFRobot_GP8403,OUTPUT_RANGE_10V
+from DFRobot_GP8403 import DFRobot_GP8403, OUTPUT_RANGE_10V
 from bedrock_cgi import ServiceBase
 import RPi.GPIO as GPIO
 from time import sleep
@@ -57,7 +55,7 @@ def handle_heater(event):
         do_gpio(HEATER, True)
     elif state in TRUE:
         do_gpio(HEATER, False)
-    event.ok({"OK": "OK"})
+    event_ok(event)
 
 
 ServiceBase.respond()
