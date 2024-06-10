@@ -43,9 +43,11 @@ do
         cpu_temperature=$(sed 's/.\{3\}$/.&/' <<< "$(</sys/class/thermal/thermal_zone0/temp)");
         sensorOutput="$sensorOutput, \"cpu-temperature\": $cpu_temperature, \"cpu-temperature-unit\": \"°C\"";
 
-        # include memory
-        memory=$(free -b | tail -2 | tr '\n' ' ' | awk '{split($0,a," "); print "\"mem-total\":" a[2] ", \"mem-used\":" a[3] ", \"mem-free\":" a[4] ", \"swap-total\":" a[9] ", \"swap-used\":" a[10] ", \"swap-free\":" a[11]}');
+        # include memory and swap
+        memory=$(free -bw | tail -2 | head -1 | awk '{split($0,a," "); print "\"total\":" a[2] ", \"used\":" a[3] ", \"free\":" a[4] ", \"shared\":" a[5] ", \"buffers\":" a[6] ", \"cache\":" a[7] ", \"available\":" a[8]}');
         sensorOutput="$sensorOutput, \"memory\": { $memory }, \"memory-unit\": \"kB\"";
+        swap=$(free -bw | tail -1 | awk '{split($0,a," "); print "\"total\":" a[2] ", \"used\":" a[3] ", \"free\":" a[4]}');
+        sensorOutput="$sensorOutput, \"swap\": { $swap }, \"swap-unit\": \"kB\"";
 
         # close the bag
         sensorOutput="$sensorOutput }";

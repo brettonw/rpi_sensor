@@ -64,7 +64,8 @@ class RpiSensorType:
 
     sensor_subtypes = {
         "cpu-load": ["usr", "sys", "idle"],
-        "memory": ["mem-total", "mem-used", "mem-free", "swap-total", "swap-used", "swap-used"]
+        "memory": ["total", "used", "free", "shared", "buffers", "cache", "available"],
+        "swap": ["total", "used", "free"]
     }
 
     # home assistant might already have device classes for some types we use, but they don't know
