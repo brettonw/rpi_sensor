@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+# install the sysstat library needed by the sensor at runtime
+sudo apt install -y sysstat apache2
+
 # get the path where we are executing from
 executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -64,9 +67,6 @@ sudo cp "$executingDir/$serviceName" "/lib/systemd/system/"
 sudo systemctl enable "$serviceName";
 sudo systemctl start "$serviceName";
 echo "Done.";
-
-# install the sysstat library needed by the sensor at runtime
-sudo apt install -y sysstat
 
 # reboot the raspberry pi
 sudo reboot now;
