@@ -24,6 +24,7 @@ fi
 
 # configure a sensor
 binPath="$homePath/bin";
+mkdir -p $binPath;
 configuredSensorFile="$binPath/sensor.py";
 while [ ! -e "$configuredSensorFile" ]; do
     installPath="$executingDir/../install";
