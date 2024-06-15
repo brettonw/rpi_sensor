@@ -93,7 +93,7 @@ class RpiSensor (SensorEntity):
         return result
 
     def __init__(self, config, record, sensor_type: str, sensor_subtype: str = ""):
-        _LOGGER.debug(f"Adding '{sensor_type}" + ("" if sensor_subtype == "" else f"-{sensor_subtype}") + f"- sensor from host: ({config[CONF_HOST]})")
+        _LOGGER.debug(f"Adding '{sensor_type}" + ("" if sensor_subtype == "" else f"-{sensor_subtype}") + f" sensor from host: ({config[CONF_HOST]})")
 
         name = config[CONF_NAME]
         self._attr_name = f"{name} {sensor_type}" + ("" if sensor_subtype == "" else f" {sensor_subtype}")
