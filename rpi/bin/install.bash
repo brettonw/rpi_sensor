@@ -1,7 +1,10 @@
 #! /usr/bin/env bash
 
 # install the sysstat library needed by the sensor at runtime
-sudo apt install -y sysstat apache2
+sudo apt install -y sysstat apache2;
+
+# set the locale to what we need for sysstat
+sudo echo "LANG=C.UTF-8" > /etc/default/locale;
 
 # get the path where we are executing from
 executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
