@@ -175,7 +175,7 @@ class AtlasEzo(ABC):
             if len(samples) > 1:
                 avg = mean(samples)
                 sd = stdev(samples)
-                error = sd / avg
+                error = (sd / avg) if (avg > 0) else 0
                 print(f"sample: {sample: 5.03f}, error: {error:.05f}, mean: {avg:5.03f}, stdev: {sd:5.03f}, samples: {len(samples): 3d}, tolerance: {tolerance:.03f}")
             else:
                 error = 1
