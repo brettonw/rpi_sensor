@@ -32,6 +32,7 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
     # CALIBRATION FUNCTIONS
 
     def calibrate_n(self, target_value: int = 53000) -> bool:
+        # note this should really only be done at 77F/25C - we don't have a correction chart
         self._rtd.wait_for_stable_value()
         return self._calibrate(f"{target_value}")
 
