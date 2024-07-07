@@ -65,14 +65,17 @@ class RpiSensorType:
     sensor_subtypes = {
         "cpu-load": ["usr", "sys", "idle"],
         "memory": ["total", "used", "free", "shared", "buffers", "cache", "available"],
-        "swap": ["total", "used", "free"]
+        "swap": ["total", "used", "free"],
+        "disk": ["total", "used", "free"]
     }
 
     # home assistant might already have device classes for some types we use, but they don't know
     # the names we use as those, so this is a simple mapping for our wierd classes
     ha_device_classes = {
         "cpu-temperature": SensorDeviceClass.TEMPERATURE,
-        "memory": SensorDeviceClass.DATA_SIZE
+        "memory": SensorDeviceClass.DATA_SIZE,
+        "swap": SensorDeviceClass.DATA_SIZE,
+        "disk": SensorDeviceClass.DATA_SIZE
     }
 
 
