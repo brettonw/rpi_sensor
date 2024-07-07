@@ -15,7 +15,7 @@ class AtlasEzoEc(AtlasEzo):
     EC_ERROR = -999.0
 
     def __init__(self, address: int = 0x64):
-        super().__init__("conductivity", address, "μS")
+        super().__init__("conductivity", address, "µS/cm")
 
     def soft_reset(self) -> None:
         # set the probe type to the 1.0 range (normal seawater range probes). probes come in 0.1,
