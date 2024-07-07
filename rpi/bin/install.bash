@@ -4,7 +4,7 @@
 sudo apt install -y sysstat apache2;
 
 # set the locale to what we need for sysstat
-sudo echo "LANG=C.UTF-8" > /etc/default/locale;
+echo "LANG=C.UTF-8" | sudo tee /etc/default/locale;
 
 # get the path where we are executing from
 executingDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -49,7 +49,7 @@ while [ ! -e "$configuredSensorFile" ]; do
     targetInstall="$installPath/$sensorName.bash";
     if [ -e "$targetInstall" ]; then
         echo "Installing support for $sensorName (this might take a little while)...";
-        sudo $targetInstall;
+        sudo "$targetInstall";
     fi
 
     targetSensor="$sensorPath/$sensorName.py";
