@@ -31,6 +31,10 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
 
     # CALIBRATION FUNCTIONS
 
+    def calibrate_n(self, target_value: int = 53000) -> bool:
+        self._rtd.wait_for_stable_value()
+        return self._calibrate(f"{target_value}")
+
     def calibrate_low(self, unused: int = 0) -> bool:
         self._rtd.wait_for_stable_value()
         target_value = interpolate([
