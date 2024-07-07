@@ -28,7 +28,7 @@ def printWantedKeyValuePair (key, value):
 # yes no array
 yesno = ["\"no\"", "\"yes\""]
 
-# from apcupsd cource, statflag values we care about are:
+# from apcupsd source, statflag values we care about are:
 UPS_online = 0x00000008
 UPS_replacebatt = 0x00000080
 

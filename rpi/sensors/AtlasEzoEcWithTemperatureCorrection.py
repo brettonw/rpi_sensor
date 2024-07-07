@@ -68,6 +68,19 @@ class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):
         ], self.temperature)
         return super().calibrate_high(int(target_value))
 
+    def calibrate_two_point(self):
+        print("Remove the EC probe and shake it off")
+        print("Press (ENTER) to continue")
+        input()
+        self.calibrate_dry()
+
+        print("Place the EC and RTD probes in the 53mS solution")
+        print("Press (ENTER) to continue")
+        input()
+        self.calibrate_n()
+
+        print("Calibration complete.")
+
     def calibrate_three_point(self):
         print("Remove the EC probe and shake it off")
         print("Press (ENTER) to continue")

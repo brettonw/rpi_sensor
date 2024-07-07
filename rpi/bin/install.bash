@@ -42,7 +42,7 @@ while [ ! -e "$configuredSensorFile" ]; do
     # look to see if a sensor was already requested on the command line
     if [ -z "$sensorName" ]; then
         echo "No sensor is configured. The choices are:";
-        find "$sensorPath" -type f -printf '    %P\n' | sed -e "s/.py$//";
+        find -maxdepth 1 "$sensorPath" -type f -printf '    %P\n' | sed -e "s/.py$//";
         read -p "Which sensor would you like to use? " sensorName;
     fi
 
