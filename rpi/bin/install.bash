@@ -26,6 +26,9 @@ if [ ! -d "$sensorDir" ]; then
     sudo chown $user:$user "$sensorDir";
     chmod ugo+r "$sensorDir";
     echo "Created sensor dir ($sensorDir).";
+
+  # put the status.png file in place
+  sudo cp "$executingDir/../img/status.png" "/var/www/html/";
 fi
 
 # configure a sensor
