@@ -50,7 +50,7 @@ do
         sensorOutput="$sensorOutput, \"swap\": { $swap }, \"swap-unit\": \"kB\"";
 
         # include disk storage
-        disk=$(df --block-size=1K --output=itotal,iused,iavail / | tail -1 | awk '{split($0,a," "); print "\"total\":" a[1] ", \"used\":" a[2] ", \"free\":" a[3]}');
+        disk=$(df --block-size=1K --output=size,used,avail / | tail -1 | awk '{split($0,a," "); print "\"total\":" a[1] ", \"used\":" a[2] ", \"free\":" a[3]}');
         sensorOutput="$sensorOutput, \"disk\": { $disk }, \"disk-unit\": \"kB\"";
 
         # close the bag
