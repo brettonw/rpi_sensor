@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-# install the sysstat library needed by the sensor at runtime
-sudo apt install -y sysstat apache2;
+# install the applications needed by the sensor at runtime
+sudo apt install -y sysstat lshw apache2;
 
 # set the locale to what we need for sysstat
 echo "LANG=C.UTF-8" | sudo tee /etc/default/locale;
@@ -30,6 +30,9 @@ if [ ! -d "$sensorDir" ]; then
   # put the status.png file in place
   sudo cp "$executingDir/../img/status.png" "/var/www/html/";
 fi
+
+# drop the system report in the sensor directory
+sudo lshw > "$sensorDir/lshw.txt";
 
 # configure a sensor
 binPath="$homePath/bin";
