@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+VERSION="1.0.10";
+
 # define a logging function
 echoerr() { echo "$@" 1>&2; }
 
@@ -32,6 +34,12 @@ do
           controls=$(<$controlsFile);
           sensorOutput="$sensorOutput, \"control\": $controls";
         fi
+
+        # include the Version
+        sensorOutput="$sensorOutput, \"rpi-sensor-version\": { VERSION }";
+
+        # include the hostname
+        sensorOutput="$sensorOutput, \"hostname\": { $HOSTNAME }";
 
         # include the Current OS
         os=$(lsb_release -a | grep -i description | sed 's/Description:\s*//');
