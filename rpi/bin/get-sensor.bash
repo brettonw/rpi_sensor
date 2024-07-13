@@ -36,14 +36,14 @@ do
         fi
 
         # include the Version
-        sensorOutput="$sensorOutput, \"rpi-sensor-version\": { $VERSION }";
+        sensorOutput="$sensorOutput, \"rpi-sensor-version\": \"$VERSION\"";
 
         # include the hostname
-        sensorOutput="$sensorOutput, \"hostname\": { $HOSTNAME }";
+        sensorOutput="$sensorOutput, \"hostname\": \"$HOSTNAME\"";
 
         # include the Current OS
         os=$(lsb_release -a | grep -i description | sed 's/Description:\s*//');
-        sensorOutput="$sensorOutput, \"os\": { $os }";
+        sensorOutput="$sensorOutput, \"os\": \"$os\"";
 
         # include cpu load, note mpstat responds to its own locale (probably www user), which makes
         # the time output different than a normal user - will need to verify across platforms
