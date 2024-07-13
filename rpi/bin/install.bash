@@ -32,7 +32,8 @@ if [ ! -d "$sensorDir" ]; then
 fi
 
 # drop the system report in the sensor directory
-sudo lshw -json > "$sensorDir/lshw.json";
+sudo lshw > "$sensorDir/lshw.txt";
+$executingDir/lshw-json.py "$sensorDir/lshw.txt" "$sensorDir/lshw.json";
 
 # configure a sensor
 binPath="$homePath/bin";

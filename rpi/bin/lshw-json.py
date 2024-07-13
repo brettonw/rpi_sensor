@@ -1,60 +1,91 @@
 #! /usr/bin/env python3
 
+# a quick and dirty python script to read the lshw text format and make a valid json
+
 import json
 import re
+import sys
 
 
 def parse_lshw_output(lshw_text):
+    stack = []
+
+    def debug(line:str)->None:
+        indent = "  " * len(stack)
+        #print(f"{indent}{line}")
+
     lines = lshw_text.splitlines()
-    data = {}
-    stack = [data]
+    debug (f"{len(lines)} lines of input")
+    current_indent = 0
 
-    section_pattern = re.compile(r'\s*\*-([\w-]+)')
-    kv_pattern = re.compile(r'\s*(\w+):\s*(.*)')
+    line_indent_pattern = re.compile(r'\s*(\*-)?')
+    new_array_pattern = re.compile(r'\s*\*-([\w-]+):(\d+)\s*(.*)\s*$')
+    new_object_pattern = re.compile(r'\s*\*-([^:]+)$')
+    new_kv_pattern = re.compile(r'\s*([^:]+):\s*(.*)')
 
-    for line in lines:
-        section_match = section_pattern.match(line)
-        kv_match = kv_pattern.match(line)
+    # read the first line and create the root element
+    name:str = lines[0].strip()
+    debug(f"name: {name}")
+    root:dict = {}
+    root[name] = {}
+    stack = [root[name]]
 
-        if section_match:
-            section_name = section_match.group(1)
-            new_section = {}
-            if isinstance(stack[-1], list):
-                stack[-1].append({section_name: new_section})
+    for line in lines[1:]:
+        # get the current indent
+        line_indent_pattern.match(line)
+        if line_indent_pattern:
+            indent = (len(line_indent_pattern.match(line).group(0)) - 1) / 3
+            #debug(f"indent {indent}")
+
+            # if the stack is longer than the current indent, pop
+            while len(stack) > indent:
+                stack.pop()
+
+        # get the current object
+        current_object = stack[-1]
+
+        # check if this line is creating a new array
+        new_array_match = new_array_pattern.match(line)
+        if new_array_match:
+            new_object_name = new_array_match.group(1)
+            new_object_index = int (new_array_match.group(2))
+            if new_object_name not in current_object:
+                debug(f"Array ({new_object_name})")
+                current_object[new_object_name] = []
+            debug(f"Object ({new_object_name}) at index {new_object_index}")
+            assert new_object_index == len(current_object[new_object_name])
+
+            new_object = {}
+            if new_array_match.group(3) != "":
+                new_object["_tag"] = new_array_match.group(3)
+
+            current_object[new_object_name].append(new_object)
+            stack.append(new_object)
+        else:
+            # new object?
+            new_object_match = new_object_pattern.match(line)
+            if new_object_match:
+                # create a new object add it to the current
+                new_object_name = new_object_match.group(1)
+                if new_object_name not in current_object:
+                    debug(f"Object ({new_object_name})")
+                    new_object = {}
+                    current_object[new_object_name] = new_object
+                    stack.append(new_object)
             else:
-                stack[-1][section_name] = new_section
-            stack.append(new_section)
+                # new key value
+                new_kv_match = new_kv_pattern.match(line)
+                if new_kv_match:
+                    current_object[new_kv_match.group(1)] = new_kv_match.group(2)
+                    debug(f"KV ({new_kv_match.group(1)} = {new_kv_match.group(2)})")
 
-        elif kv_match:
-            key, value = kv_match.groups()
-            if isinstance(stack[-1], list):
-                stack[-1][-1][key] = value
-            else:
-                stack[-1][key] = value
+    return root
 
-        elif line.startswith('    '):  # Handling nested sections
-            if isinstance(stack[-1], dict):
-                last_key = list(stack[-1].keys())[-1]
-                if isinstance(stack[-1][last_key], dict):
-                    stack.append(stack[-1][last_key])
-                else:
-                    stack[-1][last_key] = {}
-                    stack.append(stack[-1][last_key])
-            else:
-                stack.append(stack[-1][-1])
-
-        elif not line.strip():  # End of a section
-            stack.pop()
-
-    return data
-
-
-with open('lshw.txt', 'r') as file:
+# read the input file
+with open(sys.argv[1], 'r') as file:
     lshw_text = file.read()
 
 parsed_data = parse_lshw_output(lshw_text)
 
-with open('lshw.json', 'w') as json_file:
+with open(sys.argv[2], 'w') as json_file:
     json.dump(parsed_data, json_file, indent=4)
-
-print("Converted lshw output to JSON and saved to lshw_output.json")

@@ -1,0 +1,238 @@
+homesvcs
+    description: Computer
+    product: Raspberry Pi 5 Model B Rev 1.0
+    serial: 0687845b29bef62f
+    width: 64 bits
+    capabilities: smp cp15_barrier setend swp tagged_addr_disabled
+  *-core
+       description: Motherboard
+       physical id: 0
+     *-cpu:0
+          description: CPU
+          product: cpu
+          physical id: 0
+          bus info: cpu@0
+          size: 2400MHz
+          capacity: 2400MHz
+          capabilities: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp cpufreq
+        *-cache
+             description: L1 Cache
+             physical id: 0
+             size: 64KiB
+     *-cpu:1
+          description: CPU
+          product: cpu
+          physical id: 1
+          bus info: cpu@1
+          size: 2400MHz
+          capacity: 2400MHz
+          capabilities: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp cpufreq
+        *-cache
+             description: L1 Cache
+             physical id: 0
+             size: 64KiB
+     *-cpu:2
+          description: CPU
+          product: cpu
+          physical id: 2
+          bus info: cpu@2
+          size: 2400MHz
+          capacity: 2400MHz
+          capabilities: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp cpufreq
+        *-cache
+             description: L1 Cache
+             physical id: 0
+             size: 64KiB
+     *-cpu:3
+          description: CPU
+          product: cpu
+          physical id: 3
+          bus info: cpu@3
+          size: 2400MHz
+          capacity: 2400MHz
+          capabilities: fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp cpufreq
+        *-cache
+             description: L1 Cache
+             physical id: 0
+             size: 64KiB
+     *-cpu:4 DISABLED
+          description: CPU
+          product: l2-cache-l0
+          physical id: 4
+          bus info: cpu@4
+     *-cpu:5 DISABLED
+          description: CPU
+          product: l2-cache-l1
+          physical id: 5
+          bus info: cpu@5
+     *-cpu:6 DISABLED
+          description: CPU
+          product: l2-cache-l2
+          physical id: 6
+          bus info: cpu@6
+     *-cpu:7 DISABLED
+          description: CPU
+          product: l2-cache-l3
+          physical id: 7
+          bus info: cpu@7
+     *-cpu:8 DISABLED
+          description: CPU
+          product: l3-cache
+          physical id: 8
+          bus info: cpu@8
+     *-memory
+          description: System memory
+          physical id: 9
+          size: 8052MiB
+     *-pci:0
+          description: PCI bridge
+          product: Broadcom Inc. and subsidiaries
+          vendor: Broadcom Inc. and subsidiaries
+          physical id: 100
+          bus info: pci@0000:00:00.0
+          version: 21
+          width: 32 bits
+          clock: 33MHz
+          capabilities: pci pm pciexpress normal_decode bus_master cap_list
+          configuration: driver=pcieport
+          resources: irq:36 memory:1b00000000-1b000fffff
+        *-nvme
+             description: NVMe device
+             product: KINGSTON SNV2S250G
+             vendor: Kingston Technology Company, Inc.
+             physical id: 0
+             bus info: pci@0000:01:00.0
+             logical name: /dev/nvme0
+             version: EJFK3N.7
+             serial: 50026B7686B4F9B4
+             width: 64 bits
+             clock: 33MHz
+             capabilities: nvme pciexpress msix msi pm nvm_express bus_master cap_list
+             configuration: driver=nvme latency=0 nqn=nqn.2020-04.com.kingston:nvme:nvm-subsystem-sn-50026B7686B4F9B4 state=live
+             resources: irq:36 memory:1b00000000-1b00003fff
+           *-namespace:0
+                description: NVMe disk
+                physical id: 0
+                logical name: hwmon1
+           *-namespace:1
+                description: NVMe disk
+                physical id: 2
+                logical name: /dev/ng0n1
+           *-namespace:2
+                description: NVMe disk
+                physical id: 1
+                bus info: nvme@0:1
+                logical name: /dev/nvme0n1
+                size: 232GiB (250GB)
+                capabilities: partitioned partitioned:dos
+                configuration: logicalsectorsize=512 sectorsize=512 signature=e189434c wwid=eui.00000000000000000026b7686b4f9b45
+              *-volume:0 UNCLAIMED
+                   description: Windows FAT volume
+                   vendor: mkfs.fat
+                   physical id: 1
+                   bus info: nvme@0:1,1
+                   version: FAT32
+                   serial: 44fc-6cf2
+                   size: 507MiB
+                   capacity: 512MiB
+                   capabilities: primary fat initialized
+                   configuration: FATs=2 filesystem=fat label=bootfs
+              *-volume:1
+                   description: EXT4 volume
+                   vendor: Linux
+                   physical id: 2
+                   bus info: nvme@0:1,2
+                   logical name: /dev/nvme0n1p2
+                   logical name: /
+                   version: 1.0
+                   serial: 93c89e92-8f2e-4522-ad32-68faed883d2f
+                   size: 232GiB
+                   capacity: 232GiB
+                   capabilities: primary journaled extended_attributes large_files dir_nlink recover extents ext4 ext2 initialized
+                   configuration: created=2024-03-15 11:08:00 filesystem=ext4 label=rootfs lastmountpoint=/ modified=2024-07-13 13:28:31 mount.fstype=ext4 mount.options=rw,noatime mounted=2024-07-13 12:28:28 state=mounted
+     *-pci:1
+          description: PCI bridge
+          product: Broadcom Inc. and subsidiaries
+          vendor: Broadcom Inc. and subsidiaries
+          physical id: 101
+          bus info: pci@0001:00:00.0
+          version: 21
+          width: 32 bits
+          clock: 33MHz
+          capabilities: pci pm pciexpress normal_decode bus_master cap_list
+          configuration: driver=pcieport
+          resources: irq:42 memory:1f00000000-1f005fffff
+        *-network
+             description: Ethernet controller
+             physical id: 0
+             bus info: pci@0001:01:00.0
+             version: 00
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pm pciexpress msix bus_master cap_list
+             configuration: driver=rp1 latency=0
+             resources: irq:42 memory:1f00410000-1f00413fff memory:1f00000000-1f003fffff memory:1f00400000-1f0040ffff
+  *-usbhost:0
+       product: xHCI Host Controller
+       vendor: Linux 6.6.31+rpt-rpi-2712 xhci-hcd
+       physical id: 1
+       bus info: usb@1
+       logical name: usb1
+       version: 6.06
+       capabilities: usb-2.00
+       configuration: driver=hub slots=2 speed=480Mbit/s
+     *-usb
+          description: Human interface device
+          product: Tripp Lite UPS
+          vendor: Tripp Lite
+          physical id: 1
+          bus info: usb@1:1
+          version: 0.09
+          capabilities: usb-1.10
+          configuration: driver=usbfs speed=2Mbit/s
+  *-usbhost:1
+       product: xHCI Host Controller
+       vendor: Linux 6.6.31+rpt-rpi-2712 xhci-hcd
+       physical id: 2
+       bus info: usb@2
+       logical name: usb2
+       version: 6.06
+       capabilities: usb-3.00
+       configuration: driver=hub slots=1 speed=5000Mbit/s
+  *-usbhost:2
+       product: xHCI Host Controller
+       vendor: Linux 6.6.31+rpt-rpi-2712 xhci-hcd
+       physical id: 3
+       bus info: usb@3
+       logical name: usb3
+       version: 6.06
+       capabilities: usb-2.00
+       configuration: driver=hub slots=2 speed=480Mbit/s
+  *-usbhost:3
+       product: xHCI Host Controller
+       vendor: Linux 6.6.31+rpt-rpi-2712 xhci-hcd
+       physical id: 4
+       bus info: usb@4
+       logical name: usb4
+       version: 6.06
+       capabilities: usb-3.00
+       configuration: driver=hub slots=1 speed=5000Mbit/s
+  *-mmc0
+       description: MMC Host
+       physical id: 5
+       logical name: mmc0
+  *-input
+       product: pwr_button
+       physical id: 6
+       logical name: input0
+       logical name: /dev/input/event0
+       capabilities: platform
+  *-network
+       description: Ethernet interface
+       physical id: 7
+       logical name: eth0
+       serial: d8:3a:dd:e9:ab:69
+       size: 1Gbit/s
+       capacity: 1Gbit/s
+       capabilities: ethernet physical tp mii 10bt 10bt-fd 100bt 100bt-fd 1000bt 1000bt-fd autonegotiation
+       configuration: autonegotiation=on broadcast=yes driver=macb driverversion=6.6.31+rpt-rpi-2712 duplex=full ip=10.0.0.3 link=yes multicast=yes port=twisted pair speed=1Gbit/s
