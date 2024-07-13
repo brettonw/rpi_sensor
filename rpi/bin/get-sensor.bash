@@ -33,6 +33,10 @@ do
           sensorOutput="$sensorOutput, \"control\": $controls";
         fi
 
+        # include the Current OS
+        os=$(lsb_release -a | grep -i description | sed 's/Description:\s*//');
+        sensorOutput="$sensorOutput, \"os\": { $os }";
+
         # include cpu load, note mpstat responds to its own locale (probably www user), which makes
         # the time output different than a normal user - will need to verify across platforms
         # NOTE - SET THE LOCALE ON THE RUNNING MACHINE TO... C.UTF-8 (not EN)
