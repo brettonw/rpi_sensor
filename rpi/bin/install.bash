@@ -32,7 +32,7 @@ if [ ! -d "$sensorDir" ]; then
 fi
 
 # drop the system report in the sensor directory
-sudo lshw > "$sensorDir/lshw.txt";
+sudo lshw -json > "$sensorDir/lshw.json";
 
 # configure a sensor
 binPath="$homePath/bin";
