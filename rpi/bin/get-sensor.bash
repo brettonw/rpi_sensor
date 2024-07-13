@@ -36,7 +36,7 @@ do
         fi
 
         # include the Version
-        sensorOutput="$sensorOutput, \"rpi-sensor-version\": { VERSION }";
+        sensorOutput="$sensorOutput, \"rpi-sensor-version\": { $VERSION }";
 
         # include the hostname
         sensorOutput="$sensorOutput, \"hostname\": { $HOSTNAME }";

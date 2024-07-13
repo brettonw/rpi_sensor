@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # install the applications needed by the sensor at runtime
-sudo apt install -y sysstat lshw apache2;
+sudo apt-get install -y sysstat lshw apache2;
 
 # set the locale to what we need for sysstat
 echo "LANG=C.UTF-8" | sudo tee /etc/default/locale;
