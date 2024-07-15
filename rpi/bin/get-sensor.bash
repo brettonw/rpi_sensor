@@ -38,6 +38,10 @@ do
         # include the Version
         sensorOutput="$sensorOutput, \"rpi-sensor-version\": \"$VERSION\"";
 
+        # include the ip address
+        ip_address=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}');
+        sensorOutput="$sensorOutput, \"ip-address\": \"$ip_address\"";
+
         # include the hostname
         sensorOutput="$sensorOutput, \"hostname\": \"$HOSTNAME\"";
 
