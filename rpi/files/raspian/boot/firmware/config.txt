@@ -1,0 +1,18 @@
+[all]
+
+# disable WiFi and Bluetooth (this RPi is in a rack)
+dtoverlay=disable-wifi
+dtoverlay=disable-bt
+
+# this pi has a poe+ hat, with fan speed settings
+# to verify the settings:
+# od -An --endian=big -td4 /proc/device-tree/thermal-zones/cpu-thermal/trips/trip?/temperature /proc/device-tree/thermal-zones/cpu-thermal/trips/trip?/hysteresis
+# current fan speed is:
+# cat /sys/class/thermal/cooling_device0/cur_state
+# a power consumption estimate (uA) is at:
+# cat /sys/devices/platform/rpi-poe-power-supply/power_supply/rpi-poe/current_now
+dtoverlay=rpi-poe-plus
+dtparam=poe_fan_temp0=35000,poe_fan_temp0_hyst=2000
+dtparam=poe_fan_temp1=40000,poe_fan_temp1_hyst=2000
+dtparam=poe_fan_temp2=45000,poe_fan_temp2_hyst=2000
+dtparam=poe_fan_temp3=75000,poe_fan_temp3_hyst=2000

@@ -1,0 +1,21 @@
+# /etc/udev/rules.d/50-rpi-poe-plus.rules
+SUBSYSTEM=="thermal"
+KERNEL=="thermal_zone0"
+
+# off, 73C
+
+# fan speed 1 (lowest), will cool to ~68C
+ATTR{trip_point_3_temp}="35000"
+ATTR{trip_point_3_hyst}="3000"
+
+# fan speed 2, will cool to ~63C
+ATTR{trip_point_2_temp}="40000"
+ATTR{trip_point_2_hyst}="3000"
+
+# fan speed 3, will cool to ~56C, this is our target temperature and sound level
+ATTR{trip_point_1_temp}="45000"
+ATTR{trip_point_1_hyst}="5000"
+
+# fan speed 4 (highest), will cool to ~52C
+ATTR{trip_point_0_temp}="75000"
+ATTR{trip_point_0_hyst}="3000"

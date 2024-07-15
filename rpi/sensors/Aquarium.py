@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-from AtlasEzoPhWithTemperatureCorrection import AtlasEzoPhWithTemperatureCorrection
-from AtlasEzoEcWithTemperatureCorrection import AtlasEzoEcWithTemperatureCorrection
-from AtlasEzoRtd import AtlasEzoRtd
+from AtlasEzo.AtlasEzoPhWithTemperatureCorrection import AtlasEzoPhWithTemperatureCorrection
+from AtlasEzo.AtlasEzoEcWithTemperatureCorrection import AtlasEzoEcWithTemperatureCorrection
+from AtlasEzo.AtlasEzoRtd import AtlasEzoRtd
 
 
 def main():
