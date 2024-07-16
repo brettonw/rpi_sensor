@@ -39,7 +39,8 @@ do
         sensorOutput="$sensorOutput, \"rpi-sensor-version\": \"$VERSION\"";
 
         # include the ip address
-        ip_address=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}');
+        #ip_address=$(ifconfig eth0 | grep 'inet ' | awk '{print $2}');
+        ip_address=$(ip -o -4 addr list | grep -iE "eth0|wlan0"  | awk '{print $4}' | cut -d/ -f1);
         sensorOutput="$sensorOutput, \"ip-address\": \"$ip_address\"";
 
         # include the hostname
@@ -79,9 +80,10 @@ do
         counter=$(( counter + 1 ));
     fi
 
-    # sleep for a little bit (making the whole loop land on 10 second intervals)
+    # sleep for a little bit (making the whole loop land on specified intervals)
     # XXX might be nice to make it reliably 10 second intervals that are aligned to the clock minute
-    targetTimestamp=$(( startTimestamp+(counter*10000) ));
+    interval=15000
+    targetTimestamp=$(( startTimestamp+(counter*$interval) ));
     nowTimestamp=$(date +%s%3N);
     delta=$(( (targetTimestamp-nowTimestamp)/1000 ));
     if [ $delta -gt 0 ]; then
