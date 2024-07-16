@@ -2,7 +2,7 @@
 
 # EZO pH Docs: https://files.atlas-scientific.com/pH_EZO_Datasheet.pdf
 
-from AtlasEzo import AtlasEzo
+from .AtlasEzo import AtlasEzo
 
 
 class AtlasEzoPh(AtlasEzo):

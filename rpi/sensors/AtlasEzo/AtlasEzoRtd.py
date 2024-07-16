@@ -2,7 +2,7 @@
 
 # EZO RTD Docs: # https://files.atlas-scientific.com/EZO_RTD_Datasheet.pdf
 
-from AtlasEzo import AtlasEzo
+from .AtlasEzo import AtlasEzo
 from time import time
 
 

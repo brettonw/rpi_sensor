@@ -2,9 +2,9 @@
 
 # EZO EC Docs: # https://files.atlas-scientific.com/EC_EZO_Datasheet.pdf
 
-from AtlasEzoEc import AtlasEzoEc
-from AtlasEzoRtd import AtlasEzoRtd
-from interpolate import interpolate, XYPair
+from .AtlasEzoEc import AtlasEzoEc
+from .AtlasEzoRtd import AtlasEzoRtd
+from .interpolate import interpolate, XYPair
 
 
 class AtlasEzoEcWithTemperatureCorrection(AtlasEzoEc):

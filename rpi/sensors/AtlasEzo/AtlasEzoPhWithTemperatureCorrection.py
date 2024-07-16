@@ -2,9 +2,9 @@
 
 # EZO pH Docs: https://files.atlas-scientific.com/pH_EZO_Datasheet.pdf
 
-from AtlasEzoPh import AtlasEzoPh
-from AtlasEzoRtd import AtlasEzoRtd
-from interpolate import interpolate, XYPair
+from .AtlasEzoPh import AtlasEzoPh
+from .AtlasEzoRtd import AtlasEzoRtd
+from .interpolate import interpolate, XYPair
 
 
 class AtlasEzoPhWithTemperatureCorrection(AtlasEzoPh):

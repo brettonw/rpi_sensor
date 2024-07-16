@@ -2,7 +2,7 @@
 
 # EZO EC Docs: # https://files.atlas-scientific.com/EC_EZO_Datasheet.pdf
 
-from AtlasEzo import AtlasEzo
+from .AtlasEzo import AtlasEzo
 
 
 class AtlasEzoEc(AtlasEzo):
