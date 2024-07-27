@@ -1,0 +1,10 @@
+{
+  "domain": "rpi_sensor",
+  "name": "RPi Sensor",
+  "documentation": "https://github.com/brettonw/rpi_sensor",
+  "dependencies": [],
+  "codeowners": ["@brettonw"],
+  "requirements": [],
+  "iot_class": "local_polling",
+  "version": "1.0.1"
+}
