@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-pip3 install adafruit-python-shell;
-pip3 install adafruit-blinka;
+#pip3 install adafruit-python-shell;
+#pip3 install adafruit-blinka;
 
 # enable i2c - code loosely based on raspi-config
 echo "Enabling I2C";
@@ -25,7 +25,7 @@ dtparam i2c_arm=on
 
 sed -i -e "s/^#[[:space:]]*\(i2c[-_]dev\)/\1/" "$MODULES";
 I2C_MODULES=$(grep -q "^i2c[-_]dev" "$MODULES");
-if [ -z "I2C_MODULES" ]; then
+if [ -z "$I2C_MODULES" ]; then
     echo "i2c-dev" >> "$MODULES"
 fi;
 

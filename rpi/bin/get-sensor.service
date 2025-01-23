@@ -3,10 +3,9 @@ Description=Get-Sensor
 
 [Service]
 ExecStart=/usr/bin/bash /home/brettonw/bin/get-sensor.bash
-Restart=on-abort
+Restart=always
 User=brettonw
 Type=simple
 
 [Install]
 WantedBy=multi-user.target
-

@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 
-VERSION="1.0.12";
+# this should probably be a python program instead of bash...
+VERSION="1.0.13";
 
 # define a logging function
 echoerr() { echo "$@" 1>&2; }
@@ -16,6 +17,12 @@ counter=0;
 
 while :
 do
+    # XXX TODO
+    # load the sensor configuration from a JSON file and read all the sensors in
+    # config is... sensor name, driver, sampling frequency, filter, home assistant device class, units
+
+
+
     # get the sensor with the timestamp and write it to the raw log
     # source data is like (note that not all sensors sense all values, and will
     # set the value to "-" to indicate "no information"):
@@ -35,7 +42,7 @@ do
           sensorOutput="$sensorOutput, \"control\": $controls";
         fi
 
-        # include the Version
+        # include the version
         sensorOutput="$sensorOutput, \"rpi-sensor-version\": \"$VERSION\"";
 
         # include the ip address
@@ -50,6 +57,11 @@ do
         os=$(lsb_release -a | grep -i description | sed 's/Description:\s*//');
         sensorOutput="$sensorOutput, \"os\": \"$os\"";
 
+        # include the uptime
+        up=$(cat /proc/uptime |  cut -d ' ' -f 1);
+        sensorOutput="$sensorOutput, \"uptime\": { $up }, \"uptime-unit\": \"s\"";
+
+
         # include cpu load, note mpstat responds to its own locale (probably www user), which makes
         # the time output different than a normal user - will need to verify across platforms
         # NOTE - SET THE LOCALE ON THE RUNNING MACHINE TO... C.UTF-8 (not EN)
@@ -62,13 +74,13 @@ do
 
         # include memory and swap
         memory=$(free -bw | tail -2 | head -1 | awk '{split($0,a," "); print "\"total\":" a[2] ", \"used\":" a[3] ", \"free\":" a[4] ", \"shared\":" a[5] ", \"buffers\":" a[6] ", \"cache\":" a[7] ", \"available\":" a[8]}');
-        sensorOutput="$sensorOutput, \"memory\": { $memory }, \"memory-unit\": \"kB\"";
+        sensorOutput="$sensorOutput, \"memory\": { $memory }, \"memory-unit\": \"B\"";
         swap=$(free -bw | tail -1 | awk '{split($0,a," "); print "\"total\":" a[2] ", \"used\":" a[3] ", \"free\":" a[4]}');
-        sensorOutput="$sensorOutput, \"swap\": { $swap }, \"swap-unit\": \"kB\"";
+        sensorOutput="$sensorOutput, \"swap\": { $swap }, \"swap-unit\": \"B\"";
 
         # include disk storage
         disk=$(df --block-size=1K --output=size,used,avail / | tail -1 | awk '{split($0,a," "); print "\"total\":" a[1] ", \"used\":" a[2] ", \"free\":" a[3]}');
-        sensorOutput="$sensorOutput, \"disk\": { $disk }, \"disk-unit\": \"kB\"";
+        sensorOutput="$sensorOutput, \"disk\": { $disk }, \"disk-unit\": \"B\"";
 
         # close the bag
         sensorOutput="$sensorOutput }";
