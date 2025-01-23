@@ -59,7 +59,7 @@ do
 
         # include the uptime
         up=$(cat /proc/uptime |  cut -d ' ' -f 1);
-        sensorOutput="$sensorOutput, \"uptime\": { $up }, \"uptime-unit\": \"s\"";
+        sensorOutput="$sensorOutput, \"uptime\": $up, \"uptime-unit\": \"s\"";
 
 
         # include cpu load, note mpstat responds to its own locale (probably www user), which makes
